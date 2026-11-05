@@ -110,6 +110,28 @@
         </div>
     </div>
 
+    <!-- ADMIN PIN LOGIN MODAL -->
+    <div id="adminPinModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border-2 border-purple-600">
+            <div class="w-14 h-14 bg-purple-50 text-purple-700 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black shadow-inner">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <div class="font-black text-base text-gray-900">لوحة الإدارة المحمية</div>
+            <p class="text-xs text-gray-500 leading-relaxed">أدخل رمز الحماية السري للوصول إلى إدارة طلبات المحافظة.</p>
+            
+            <input type="password" id="adminPinInput" placeholder="أدخل رمز المرور السري..." class="w-full p-3.5 rounded-2xl border border-gray-200 bg-gray-50 text-center font-bold tracking-widest text-lg outline-none focus:border-purple-600">
+
+            <div class="space-y-2">
+                <button onclick="verifyAdminPin()" class="w-full bg-purple-700 text-white py-3.5 rounded-2xl font-black text-xs shadow-lg shadow-purple-700/20 hover:bg-purple-800 transition">
+                    دخول اللوحة الآمنة <i class="fas fa-unlock mr-1"></i>
+                </button>
+                <button onclick="closeAdminPinModal()" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-2xl font-bold text-xs hover:bg-gray-200 transition">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -132,10 +154,10 @@
 
                 <nav class="hidden lg:flex items-center gap-1 font-bold text-xs text-gray-600 mr-2">
                     <button onclick="switchView('home')" id="nav-home" class="px-3 py-2 rounded-xl text-brand-500 bg-red-50">الرئيسية</button>
-                    <button onclick="switchView('request-blood')" id="nav-request-blood" class="px-3 py-2 rounded-xl hover:bg-red-50">طلب دم طارئ</button>
                     <button onclick="switchView('donor-register')" id="nav-donor-register" class="px-3 py-2 rounded-xl hover:bg-red-50">تسجيل متبرع</button>
-                    <button onclick="switchView('search-donors')" id="nav-search-donors" class="px-3 py-2 rounded-xl hover:bg-red-50">بحث المتبرعين</button>
-                    <button onclick="switchView('admin-dashboard')" id="nav-admin-dashboard" class="px-3 py-2 rounded-xl text-purple-700 hover:bg-purple-50">الإدارة</button>
+                    <button onclick="switchView('request-blood')" id="nav-request-blood" class="px-3 py-2 rounded-xl hover:bg-red-50">طلب دم طارئ</button>
+                    <button onclick="switchView('search-donors')" id="nav-search-donors" class="px-3 py-2 rounded-xl hover:bg-red-50">دليل المتبرعين</button>
+                    <button onclick="requestAdminAccess()" id="nav-admin-dashboard" class="px-3 py-2 rounded-xl text-purple-700 hover:bg-purple-50">الإدارة</button>
                 </nav>
 
                 <button onclick="switchView('inbox')" class="p-2.5 rounded-2xl border border-gray-200 text-gray-700 relative hover:bg-red-50 hover:border-red-200 transition">
@@ -151,11 +173,11 @@
         <button onclick="switchView('home')" id="mob-home" class="flex flex-col items-center gap-1 text-brand-500">
             <i class="fas fa-heart-pulse text-base"></i> الرئيسية
         </button>
-        <button onclick="switchView('request-blood')" id="mob-request-blood" class="flex flex-col items-center gap-1">
-            <i class="fas fa-hand-holding-medical text-base"></i> طلب دم
-        </button>
         <button onclick="switchView('donor-register')" id="mob-donor-register" class="flex flex-col items-center gap-1">
-            <i class="fas fa-user-plus text-base"></i> متبرع
+            <i class="fas fa-user-plus text-base"></i> أريد التبرع
+        </button>
+        <button onclick="switchView('request-blood')" id="mob-request-blood" class="flex flex-col items-center gap-1">
+            <i class="fas fa-hand-holding-medical text-base"></i> أحتاج دم
         </button>
         <button onclick="switchView('search-donors')" id="mob-search-donors" class="flex flex-col items-center gap-1">
             <i class="fas fa-search text-base"></i> البحث
@@ -169,24 +191,47 @@
     <!-- Main Views Container -->
     <main class="flex-grow max-w-5xl w-full mx-auto p-4 space-y-6">
         
-        <!-- HOME VIEW -->
+        <!-- HOME VIEW (MAIN PORTAL CHOICE) -->
         <section id="view-home" class="view-section space-y-6">
             <div class="hero-gradient rounded-3xl p-6 sm:p-8 text-white space-y-4 shadow-xl relative overflow-hidden">
                 <div class="absolute -left-10 -bottom-10 opacity-10 text-9xl font-black">
                     <i class="fas fa-droplet"></i>
                 </div>
                 <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-bold border border-white/20">
-                    <i class="fas fa-map-pin"></i> نطاق العرض: محافظة <span id="heroGovTitle" class="underline font-black">ميسان</span>
+                    <i class="fas fa-map-pin"></i> المحافظة الحالية: <span id="heroGovTitle" class="underline font-black">ميسان</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black leading-tight">قطرة منك.. قد تنقذ حياة مريض قريب منك</h1>
-                <p class="text-xs sm:text-sm text-white/90 leading-relaxed max-w-xl font-medium">الطلبات الواردة من مستشفيات محافظة <span id="heroGovName">ميسان</span> تظهر هنا حصرياً لتمكين متبرعي المحافظة من الاستجابة السريعة.</p>
-                <div class="flex flex-wrap gap-2.5 pt-2">
-                    <button onclick="switchView('request-blood')" class="bg-white text-brand-700 px-5 py-3 rounded-2xl font-black text-xs shadow-lg hover:bg-red-50 transition active:scale-95">
-                        <i class="fas fa-plus-circle ml-1"></i> طلب دم طارئ
-                    </button>
-                    <button onclick="switchView('donor-register')" class="bg-black/20 border border-white/30 text-white px-5 py-3 rounded-2xl font-black text-xs hover:bg-black/30 transition active:scale-95">
-                        <i class="fas fa-hand-holding-heart ml-1"></i> التبرع بالدم
-                    </button>
+                <h1 class="text-2xl sm:text-3xl font-black leading-tight">مرحباً بك في بنك الدم العراقي</h1>
+                <p class="text-xs sm:text-sm text-white/90 leading-relaxed max-w-xl font-medium">اختر مسارك مباشرة لمساعدتنا في تقديم الاستجابة الأسرع لحالات الطوارئ في محافظة <span id="heroGovName">ميسان</span>.</p>
+            </div>
+
+            <!-- DUAL SMART PORTAL SELECTION -->
+            <div class="grid sm:grid-cols-2 gap-4">
+                <!-- Option 1: Want to Donate -->
+                <div onclick="switchView('donor-register')" class="glass-card p-6 rounded-3xl space-y-3 cursor-pointer hover:border-brand-500 hover:shadow-xl transition transform hover:-translate-y-1 bg-white">
+                    <div class="w-14 h-14 rounded-2xl bg-red-50 text-brand-600 flex items-center justify-center text-2xl font-black shadow-inner">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-black text-lg text-gray-900">أنا متبرع (أريد التبرع بالدم) 🩸</h2>
+                        <p class="text-xs text-gray-500 font-medium mt-1 leading-relaxed">قم بتسجيل معلوماتك (الاسم، الهاتف، فصيلة الدم) لكي يجدك المرضى والمستشفيات عند الحاجة في محافظتك.</p>
+                    </div>
+                    <div class="text-xs font-black text-brand-600 pt-2 flex items-center gap-1">
+                        دخول قسم التسجيل <i class="fas fa-arrow-left"></i>
+                    </div>
+                </div>
+
+                <!-- Option 2: Need Blood -->
+                <div onclick="switchView('request-blood')" class="glass-card p-6 rounded-3xl space-y-3 cursor-pointer hover:border-brand-500 hover:shadow-xl transition transform hover:-translate-y-1 bg-white">
+                    <div class="w-14 h-14 rounded-2xl bg-red-50 text-brand-600 flex items-center justify-center text-2xl font-black shadow-inner">
+                        <i class="fas fa-notes-medical"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-black text-lg text-gray-900">أحتاج دم (تقديم طلب طارئ) 🏥</h2>
+                        <p class="text-xs text-gray-500 font-medium mt-1 leading-relaxed">أضف طلب دم عاجل لمريض في المستشفى، أو ابحث مباشرة في دليل المتبرعين المتاحين بمحافظتك.</p>
+                    </div>
+                    <div class="text-xs font-black text-brand-600 pt-2 flex items-center gap-1">
+                        دخول قسم الطلبات والدليل <i class="fas fa-arrow-left"></i>
+                    </div>
                 </div>
             </div>
 
@@ -202,14 +247,14 @@
                 </div>
                 <div class="glass-card p-4 rounded-3xl text-center">
                     <div class="text-xl font-black text-emerald-600">مباشر</div>
-                    <div class="text-[10px] text-gray-500 font-bold mt-1">نشر فوري سحابي</div>
+                    <div class="text-[10px] text-gray-500 font-bold mt-1">نشر سحابي موحد</div>
                 </div>
             </div>
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <h2 class="font-black text-gray-900 text-sm sm:text-base flex items-center gap-2">
-                        <i class="fas fa-notes-medical text-brand-500"></i> الطلبات الطارئة في محافظة <span id="reqGovTitle" class="text-brand-700">ميسان</span>
+                        <i class="fas fa-clock-rotate-left text-brand-500"></i> أحدث الطلبات الطارئة في محافظة <span id="reqGovTitle" class="text-brand-700">ميسان</span>
                     </h2>
                     <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full font-black border border-emerald-200">
                         <i class="fas fa-circle text-[7px] animate-pulse"></i> تحديث مباشر
@@ -221,13 +266,67 @@
             </div>
         </section>
 
-        <!-- REQUEST BLOOD VIEW -->
-        <section id="view-request-blood" class="view-section hidden max-w-lg mx-auto">
+        <!-- DONOR REGISTER VIEW (أنا متبرع) -->
+        <section id="view-donor-register" class="view-section hidden max-w-lg mx-auto space-y-4">
+            <button onclick="switchView('home')" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-2xl text-xs font-bold hover:bg-red-50 hover:text-brand-700 transition flex items-center gap-2 shadow-sm">
+                <i class="fas fa-arrow-right"></i> العودة للقائمة الرئيسية
+            </button>
+
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <div class="border-b border-gray-100 pb-3 flex justify-between items-center">
+                    <div>
+                        <h2 class="font-black text-brand-700 text-base">تسجيل بيانات متبرع</h2>
+                        <p class="text-[11px] text-gray-400 font-medium">سيتم إضافة بياناتك لمتبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
+                    </div>
+                    <span class="w-9 h-9 rounded-2xl bg-red-50 text-brand-500 flex items-center justify-center font-black"><i class="fas fa-user-plus"></i></span>
+                </div>
+
+                <form id="donorForm" onsubmit="handleDonorSubmit(event)" class="space-y-3.5 text-xs font-bold">
+                    <div>
+                        <label class="text-gray-700 block mb-1">الاسم الكامل للمتبرع</label>
+                        <input type="text" id="dName" required placeholder="مثال: أحمد عبد الله" class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-normal outline-none focus:border-brand-500 focus:bg-white transition">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="text-gray-700 block mb-1">رقم الهاتف</label>
+                            <input type="tel" id="dPhone" required placeholder="0770..." class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-normal outline-none focus:border-brand-500 focus:bg-white transition">
+                        </div>
+                        <div>
+                            <label class="text-gray-700 block mb-1">فصيلة الدم</label>
+                            <select id="dBlood" class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-bold text-brand-700 outline-none focus:border-brand-500 focus:bg-white transition">
+                                <option value="O-">O-</option>
+                                <option value="O+">O+</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-gray-700 block mb-1">المنطقة / القضاء في <span class="currentGovText text-brand-700">ميسان</span></label>
+                        <input type="text" id="dArea" required placeholder="مثال: العمارة - حي المعلمين" class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-normal outline-none focus:border-brand-500 focus:bg-white transition">
+                    </div>
+                    <button type="submit" id="donorSubmitBtn" class="w-full hero-gradient text-white py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-brand-500/20 hover:opacity-95 transition">
+                        حفظ بياناتي كمتبرع
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- REQUEST BLOOD VIEW (أحتاج دم) -->
+        <section id="view-request-blood" class="view-section hidden max-w-lg mx-auto space-y-4">
+            <button onclick="switchView('home')" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-2xl text-xs font-bold hover:bg-red-50 hover:text-brand-700 transition flex items-center gap-2 shadow-sm">
+                <i class="fas fa-arrow-right"></i> العودة للقائمة الرئيسية
+            </button>
+
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="border-b border-gray-100 pb-3 flex justify-between items-center">
                     <div>
                         <h2 class="font-black text-brand-700 text-base">تقديم طلب دم طارئ</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">سيتم نشر الطلب فوراً لمتبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
+                        <p class="text-[11px] text-gray-400 font-medium">سيتم نشر الطلب لمتبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
                     </div>
                     <span class="w-9 h-9 rounded-2xl bg-red-50 text-brand-500 flex items-center justify-center font-black"><i class="fas fa-notes-medical"></i></span>
                 </div>
@@ -271,54 +370,12 @@
             </div>
         </section>
 
-        <!-- DONOR REGISTER VIEW -->
-        <section id="view-donor-register" class="view-section hidden max-w-lg mx-auto">
-            <div class="glass-card p-6 rounded-3xl space-y-4">
-                <div class="border-b border-gray-100 pb-3 flex justify-between items-center">
-                    <div>
-                        <h2 class="font-black text-brand-700 text-base">تسجيل متبرع جديد</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">سيتم تسجيلك ضمن متبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
-                    </div>
-                    <span class="w-9 h-9 rounded-2xl bg-red-50 text-brand-500 flex items-center justify-center font-black"><i class="fas fa-user-plus"></i></span>
-                </div>
-
-                <form id="donorForm" onsubmit="handleDonorSubmit(event)" class="space-y-3.5 text-xs font-bold">
-                    <div>
-                        <label class="text-gray-700 block mb-1">الاسم الكامل</label>
-                        <input type="text" id="dName" required placeholder="اسم المتبرع" class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-normal outline-none focus:border-brand-500 focus:bg-white transition">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <div>
-                            <label class="text-gray-700 block mb-1">رقم الهاتف</label>
-                            <input type="tel" id="dPhone" required placeholder="0770..." class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-normal outline-none focus:border-brand-500 focus:bg-white transition">
-                        </div>
-                        <div>
-                            <label class="text-gray-700 block mb-1">فصيلة الدم</label>
-                            <select id="dBlood" class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-bold text-brand-700 outline-none focus:border-brand-500 focus:bg-white transition">
-                                <option value="O-">O-</option>
-                                <option value="O+">O+</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-gray-700 block mb-1">المنطقة / القضاء في <span class="currentGovText text-brand-700">ميسان</span></label>
-                        <input type="text" id="dArea" required placeholder="مثال: العمارة - حي المعلمين" class="w-full p-3 rounded-2xl border border-gray-200 bg-gray-50/50 font-normal outline-none focus:border-brand-500 focus:bg-white transition">
-                    </div>
-                    <button type="submit" id="donorSubmitBtn" class="w-full hero-gradient text-white py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-brand-500/20 hover:opacity-95 transition">
-                        حفظ التسجيل كمتبرع
-                    </button>
-                </form>
-            </div>
-        </section>
-
-        <!-- SEARCH DONORS VIEW -->
+        <!-- SEARCH DONORS VIEW (دليل المتبرعين) -->
         <section id="view-search-donors" class="view-section hidden space-y-4">
+            <button onclick="switchView('home')" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-2xl text-xs font-bold hover:bg-red-50 hover:text-brand-700 transition flex items-center gap-2 shadow-sm">
+                <i class="fas fa-arrow-right"></i> العودة للقائمة الرئيسية
+            </button>
+
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                     <div>
@@ -354,7 +411,10 @@
                         <h2 class="font-black text-brand-700 text-base">لوحة إدارة الطوارئ بالمحافظة</h2>
                         <p class="text-[11px] text-gray-400 font-medium">إدارة ومراجعة الطلبات الخاصة بمحافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
                     </div>
-                    <span class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-black">Super Admin</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-black">مؤمن بالرمز</span>
+                        <button onclick="switchView('home')" class="text-xs bg-gray-100 px-3 py-1.5 rounded-xl font-bold text-gray-700 hover:bg-gray-200">خروج</button>
+                    </div>
                 </div>
                 <div id="adminList" class="space-y-2 text-xs">
                     <div class="text-center py-8 text-gray-400">جاري تحميل البيانات...</div>
@@ -362,25 +422,29 @@
             </div>
         </section>
 
-        <!-- INBOX VIEW -->
-        <section id="view-inbox" class="view-section hidden max-w-lg mx-auto">
+        <!-- INBOX VIEW (بريد وارد خاص لكل مستخدم) -->
+        <section id="view-inbox" class="view-section hidden max-w-lg mx-auto space-y-4">
+            <button onclick="switchView('home')" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-2xl text-xs font-bold hover:bg-red-50 hover:text-brand-700 transition flex items-center gap-2 shadow-sm">
+                <i class="fas fa-arrow-right"></i> العودة للقائمة الرئيسية
+            </button>
+
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                     <div>
-                        <h2 class="font-black text-gray-900 text-base">البريد الوارد والتنبيهات</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">استجابات المتبرعين والتحديثات الخاصة بطلباتك</p>
+                        <h2 class="font-black text-gray-900 text-base">بريدك الوارد والتنبيهات الخاص بك</h2>
+                        <p class="text-[11px] text-gray-400 font-medium">استجابات المتبرعين والتحديثات الخاصة بطلباتك الشخصية فقط</p>
                     </div>
-                    <button onclick="clearInbox()" class="text-[10px] text-brand-500 font-bold hover:underline">مسح الكل</button>
+                    <button onclick="clearInbox()" class="text-[10px] text-brand-500 font-bold hover:underline">مسح البريد</button>
                 </div>
                 <div id="inboxList" class="space-y-3 text-xs">
-                    <!-- Dynamic Inbox Items -->
+                    <!-- Dynamic User Specific Inbox Items -->
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Modal Box (General / Alert) -->
+    <!-- Modal Box (General Alert) -->
     <div id="customModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border border-red-50">
             <div id="modalIcon" class="w-14 h-14 bg-red-50 text-brand-500 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black shadow-inner">
@@ -429,6 +493,9 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Secret Admin PIN Code
+        const ADMIN_SECRET_PIN = "9988";
+
         window.dismissSplash = function() {
             const splash = document.getElementById('splashScreen');
             if(splash) {
@@ -458,8 +525,8 @@
         let selectedGovernorate = localStorage.getItem('user_gov') || 'ميسان';
         let allRequests = [];
         let allDonors = [];
-        let myInbox = JSON.parse(localStorage.getItem('iraq_inbox') || JSON.stringify([
-            { id: '1', title: 'أهلاً بك في نبض العراق', text: `تم اختيار محافظة ${selectedGovernorate} بنجاح. ستظهر لك طلبات ومتبرعي هذه المحافظة حصراً.`, time: 'الآن', read: false }
+        let myInbox = JSON.parse(localStorage.getItem('user_private_inbox') || JSON.stringify([
+            { id: '1', title: 'أهلاً بك في منصة نبض العراق', text: `تم ضبط محافظتك على (${selectedGovernorate}). جميع الإشعارات الخاصة بالاستجابة لطلباتك ستصل هنا فقط.`, time: 'الآن', read: false }
         ]));
 
         window.confirmGovernorateSelection = function() {
@@ -470,7 +537,6 @@
             document.getElementById('govSelectorModal').classList.add('hidden');
             
             renderHomeRequests();
-            renderDonors(allDonors);
             renderAdminRequests();
             updateStats();
         };
@@ -478,6 +544,27 @@
         window.openGovSelector = function() {
             document.getElementById('modalGovSelect').value = selectedGovernorate;
             document.getElementById('govSelectorModal').classList.remove('hidden');
+        };
+
+        // Admin Security PIN Validation
+        window.requestAdminAccess = function() {
+            document.getElementById('adminPinInput').value = '';
+            document.getElementById('adminPinModal').classList.remove('hidden');
+        };
+
+        window.closeAdminPinModal = function() {
+            document.getElementById('adminPinModal').classList.add('hidden');
+        };
+
+        window.verifyAdminPin = function() {
+            const enteredPin = document.getElementById('adminPinInput').value;
+            if(enteredPin === ADMIN_SECRET_PIN) {
+                closeAdminPinModal();
+                switchView('admin-dashboard');
+                showCustomModal('مرحباً بك يا مدير', 'تم التحقق من الرمز بنجاح وفتح لوحة الإدارة.', 'fa-shield-check');
+            } else {
+                showCustomModal('خطأ في الرمز!', 'رمز الحماية الذي أدخلته غير صحيح. يرجى المحاولة مرة أخرى.', 'fa-triangle-exclamation');
+            }
         };
 
         window.switchView = function(view) {
@@ -505,14 +592,14 @@
             document.getElementById('donorPopupModal').classList.add('hidden');
         };
 
-        // When a donor responds to a request -> Show pop up with donor details & option to delete request
+        // Instant Pop-up Response Trigger
         window.respondToRequest = function(requestId, patientName, patientPhone) {
             const donorName = prompt("أدخل اسمك الكريم للتواصل كمتبرع:");
             if(!donorName) return;
             const donorPhone = prompt("أدخل رقم هاتفك للاتصال بك:");
             if(!donorPhone) return;
 
-            // Save to inbox notification
+            // Save to Private Inbox
             const newMsg = {
                 id: Date.now().toString(),
                 title: 'استجابة متبرع جديدة 🩸',
@@ -522,25 +609,25 @@
             };
 
             myInbox.unshift(newMsg);
-            localStorage.setItem('iraq_inbox', JSON.stringify(myInbox));
+            localStorage.setItem('user_private_inbox', JSON.stringify(myInbox));
             renderInbox();
 
-            // Display popup immediately on screen with donor details
+            // Direct On-Screen Pop-up Notification
             const contentDiv = document.getElementById('popupContent');
             contentDiv.innerHTML = `
                 <div class="space-y-1.5 font-bold text-gray-800">
                     <div class="text-sm text-brand-700 font-black">المريض: ${patientName}</div>
-                    <div class="text-xs text-gray-600">اسم المتبرع المتطوع: <span class="text-gray-900 font-black">${donorName}</span></div>
+                    <div class="text-xs text-gray-600">اسم المتبرع: <span class="text-gray-900 font-black">${donorName}</span></div>
                     <div class="text-xs text-gray-600">رقم هاتف المتبرع: <span class="text-brand-700 font-black bg-white px-2 py-0.5 rounded border">${donorPhone}</span></div>
-                    <div class="text-[11px] text-emerald-700 font-semibold pt-1"><i class="fas fa-check-circle"></i> يمكنك التواصل هاتفياً معه فوراً وإتمام التبرع.</div>
+                    <div class="text-[11px] text-emerald-700 font-semibold pt-1"><i class="fas fa-check-circle"></i> يمكنك الاتصال به هاتفياً وإتمام العملية فوراً.</div>
                 </div>
             `;
 
             document.getElementById('popupCallBtn').href = `tel:${donorPhone}`;
-            document.getElementById('popupResolveBtn শক্তির').onclick = function() {
+            document.getElementById('popupResolveBtn').onclick = function() {
                 deleteRequest(requestId);
                 closeDonorPopup();
-                showCustomModal('تم إغلاق وحذف الطلب بنجاح', 'تمت عملية التبرع وإزالة الطلب من النظام لمنع أي تراكم.', 'fa-circle-check');
+                showCustomModal('تم إغلاق وحذف الطلب بنجاح', 'تمت عملية التبرع وإزالة الطلب من جميع الجهات لمنع التراكم.', 'fa-circle-check');
             };
 
             document.getElementById('donorPopupModal').classList.remove('hidden');
@@ -548,7 +635,7 @@
 
         window.clearInbox = function() {
             myInbox = [];
-            localStorage.setItem('iraq_inbox', JSON.stringify([]));
+            localStorage.setItem('user_private_inbox', JSON.stringify([]));
             renderInbox();
         };
 
@@ -582,7 +669,7 @@
             }
 
             if(myInbox.length === 0) {
-                list.innerHTML = `<div class="text-center py-8 text-gray-400">لا توجد رسائل أو تنبيهات حالياً.</div>`;
+                list.innerHTML = `<div class="text-center py-8 text-gray-400">لا توجد رسائل أو تنبيهات في بريدك الخاص حالياً.</div>`;
                 return;
             }
 
@@ -599,7 +686,7 @@
 
         function markInboxRead() {
             myInbox.forEach(m => m.read = true);
-            localStorage.setItem('iraq_inbox', JSON.stringify(myInbox));
+            localStorage.setItem('user_private_inbox', JSON.stringify(myInbox));
             renderInbox();
         }
 
@@ -757,11 +844,11 @@
             btn.disabled = true;
 
             let countdown = 3;
-            btn.innerText = `جاري تسجيلك في ${selectedGovernorate}... (${countdown})`;
+            btn.innerText = `جاري حفظ بياناتك في ${selectedGovernorate}... (${countdown})`;
             const timer = setInterval(() => {
                 countdown--;
                 if(countdown > 0) {
-                    btn.innerText = `جاري تسجيلك في ${selectedGovernorate}... (${countdown})`;
+                    btn.innerText = `جاري حفظ بياناتك في ${selectedGovernorate}... (${countdown})`;
                 } else {
                     clearInterval(timer);
                 }
@@ -790,7 +877,7 @@
                 updateStats();
 
                 btn.disabled = false;
-                btn.innerText = 'حفظ التسجيل كمتبرع';
+                btn.innerText = 'حفظ بياناتي كمتبرع';
                 document.getElementById('donorForm').reset();
                 showCustomModal('شكراً لأبطال التبرع!', `تم تسجيلك بنجاح ضمن قائمة متبرعي محافظة ${selectedGovernorate}.`, 'fa-user-check');
                 switchView('search-donors');
