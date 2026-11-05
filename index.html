@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نبض العراق | Nabad Iraq - منصة ميسان الرسمية للتبرع بالدم</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#D62839',
+                            700: '#9D0208',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #F8F9FA; padding-bottom: 70px; }
+        @media(min-width: 1024px) { body { padding-bottom: 0; } }
+        .glass-card { background: #ffffff; border: 1px solid rgba(214, 40, 57, 0.08); box-shadow: 0 4px 20px -2px rgba(214, 40, 57, 0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchView('home')">
+                <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center text-white font-black text-lg">
+                    <i class="fas fa-droplet"></i>
+                </div>
+                <div>
+                    <div class="font-black text-brand-700 text-lg leading-none">نبض العراق <span class="text-[10px] bg-red-100 text-brand-700 px-1.5 py-0.5 rounded-full font-bold">ميسان</span></div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">قطرة منك.. حياة لغيرك</div>
+                </div>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-2 font-bold text-xs text-gray-600">
+                <button onclick="switchView('home')" id="nav-home" class="px-3 py-2 rounded-xl text-brand-500 bg-red-50">الرئيسية</button>
+                <button onclick="switchView('request-blood')" id="nav-request-blood" class="px-3 py-2 rounded-xl hover:bg-red-50">طلب دم</button>
+                <button onclick="switchView('donor-register')" id="nav-donor-register" class="px-3 py-2 rounded-xl hover:bg-red-50">تسجيل متبرع</button>
+                <button onclick="switchView('search-donors')" id="nav-search-donors" class="px-3 py-2 rounded-xl hover:bg-red-50">بحث المتبرعين</button>
+                <button onclick="switchView('admin-dashboard')" id="nav-admin-dashboard" class="px-3 py-2 rounded-xl text-purple-700 hover:bg-purple-50">الإدارة</button>
+            </nav>
+
+            <div class="flex items-center gap-2">
+                <button onclick="switchView('inbox')" class="p-2 rounded-xl border border-gray-200 text-gray-700 relative">
+                    <i class="fas fa-bell"></i>
+                    <span id="unreadBadge" class="absolute -top-1 -right-1 bg-brand-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 lg:hidden flex justify-around py-2 text-[10px] font-bold text-gray-500">
+        <button onclick="switchView('home')" class="flex flex-col items-center gap-1 text-brand-500">
+            <i class="fas fa-home text-base"></i> الرئيسية
+        </button>
+        <button onclick="switchView('request-blood')" class="flex flex-col items-center gap-1">
+            <i class="fas fa-hand-holding-medical text-base"></i> طلب دم
+        </button>
+        <button onclick="switchView('donor-register')" class="flex flex-col items-center gap-1">
+            <i class="fas fa-user-plus text-base"></i> متبرع
+        </button>
+        <button onclick="switchView('search-donors')" class="flex flex-col items-center gap-1">
+            <i class="fas fa-search text-base"></i> بحث
+        </button>
+        <button onclick="switchView('admin-dashboard')" class="flex flex-col items-center gap-1">
+            <i class="fas fa-user-shield text-base"></i> الإدارة
+        </button>
+    </div>
+
+    <!-- Main Views Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 space-y-6">
+        
+        <!-- HOME VIEW -->
+        <section id="view-home" class="view-section space-y-6">
+            <div class="bg-gradient-to-r from-brand-700 to-brand-500 rounded-3xl p-6 text-white space-y-3">
+                <div class="text-xs bg-white/20 px-3 py-1 rounded-full inline-block font-bold">منصة محافظة ميسان الطبية</div>
+                <h1 class="text-2xl font-black">نبض العراق | منصة التبرع بالدم المركزية</h1>
+                <p class="text-xs text-white/90">نعمل مع مستشفيات ميسان لتسهيل تأمين الدم للحالات الطارئة.</p>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="switchView('request-blood')" class="bg-white text-brand-700 px-4 py-2.5 rounded-xl font-bold text-xs">أحتاج دم</button>
+                    <button onclick="switchView('donor-register')" class="bg-black/20 border border-white/30 text-white px-4 py-2.5 rounded-xl font-bold text-xs">سجل كمتبرع</button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="font-black text-gray-800 text-sm">الحالات الطارئة الموثقة في ميسان</h2>
+                <div id="homeRequestsList" class="grid sm:grid-cols-2 gap-3">
+                    <div class="text-center py-6 text-gray-400 text-xs">جاري تحميل الطلبات من السحابة...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REQUEST BLOOD VIEW -->
+        <section id="view-request-blood" class="view-section hidden max-w-lg mx-auto">
+            <div class="glass-card p-5 rounded-3xl space-y-4">
+                <h2 class="font-black text-brand-700 text-base border-b pb-2">طلب دم جديد (ميسان)</h2>
+                <form id="reqForm" onsubmit="handleRequestSubmit(event)" class="space-y-3 text-xs font-bold">
+                    <div>
+                        <label class="text-gray-600 block mb-1">اسم المريض الكامل</label>
+                        <input type="text" id="rName" required class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-gray-600 block mb-1">رقم الهاتف</label>
+                            <input type="tel" id="rPhone" required placeholder="0770..." class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
+                        </div>
+                        <div>
+                            <label class="text-gray-600 block mb-1">فصيلة الدم</label>
+                            <select id="rBlood" class="w-full p-2.5 rounded-xl border border-gray-200 text-brand-700">
+                                <option value="O-">O-</option>
+                                <option value="O+">O+</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-gray-600 block mb-1">المستشفى</label>
+                        <select id="rHosp" class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
+                            <option value="مستشفى الصدر التعليمي">مستشفى الصدر التعليمي</option>
+                            <option value="مستشفى العمارة (التركي)">مستشفى العمارة (التركي)</option>
+                            <option value="مستشفى الحكيم العام">مستشفى الحكيم العام</option>
+                            <option value="مستشفى الطفل والولادة">مستشفى الطفل والولادة</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-xl font-bold">إرسال الطلب للمراجعة</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- DONOR REGISTER VIEW -->
+        <section id="view-donor-register" class="view-section hidden max-w-lg mx-auto">
+            <div class="glass-card p-5 rounded-3xl space-y-4">
+                <h2 class="font-black text-brand-700 text-base border-b pb-2">تسجيل متبرع جديد (ميسان)</h2>
+                <form id="donorForm" onsubmit="handleDonorSubmit(event)" class="space-y-3 text-xs font-bold">
+                    <div>
+                        <label class="text-gray-600 block mb-1">الاسم الكامل</label>
+                        <input type="text" id="dName" required class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-gray-600 block mb-1">رقم الهاتف</label>
+                            <input type="tel" id="dPhone" required placeholder="0770..." class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
+                        </div>
+                        <div>
+                            <label class="text-gray-600 block mb-1">فصيلة الدم</label>
+                            <select id="dBlood" class="w-full p-2.5 rounded-xl border border-gray-200 text-brand-700">
+                                <option value="O-">O-</option>
+                                <option value="O+">O+</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-gray-600 block mb-1">القضاء / المنطقة في ميسان</label>
+                        <input type="text" id="dArea" required placeholder="مثال: العمارة - حي الحسين" class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
+                    </div>
+                    <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-xl font-bold">حفظ التسجيل كمتبرع</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SEARCH DONORS VIEW -->
+        <section id="view-search-donors" class="view-section hidden space-y-4">
+            <div class="glass-card p-5 rounded-3xl space-y-4">
+                <h2 class="font-black text-brand-700 text-base border-b pb-2">بحث المتبرعين المتاحين</h2>
+                <div class="grid sm:grid-cols-2 gap-2">
+                    <select id="searchBlood" onchange="filterDonors()" class="p-2.5 rounded-xl border border-gray-200 text-xs font-bold">
+                        <option value="">جميع الفصائل</option>
+                        <option value="O-">O-</option>
+                        <option value="O+">O+</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div id="donorsList" class="grid sm:grid-cols-2 gap-3 pt-2">
+                    <div class="text-center py-6 text-gray-400 text-xs">جاري تحميل قائمة المتبرعين...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN VIEW -->
+        <section id="view-admin-dashboard" class="view-section hidden space-y-4">
+            <div class="glass-card p-5 rounded-3xl space-y-3">
+                <h2 class="font-black text-brand-700 text-base border-b pb-2">لوحة إشراف بنك الدم (ميسان)</h2>
+                <div id="adminList" class="space-y-2 text-xs">
+                    <div class="text-center py-6 text-gray-400">جاري تحميل الطلبات للتدقيق...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INBOX VIEW -->
+        <section id="view-inbox" class="view-section hidden max-w-md mx-auto">
+            <div class="glass-card p-5 rounded-3xl space-y-3">
+                <h2 class="font-black text-gray-800 text-sm border-b pb-2">البريد الوارد والتنبيهات</h2>
+                <div id="inboxList" class="space-y-2 text-xs">
+                    <div class="p-3 bg-red-50 rounded-xl text-brand-700 font-medium">
+                        أهلاً بك في منصة نبض العراق. تم ربط النظام بنجاح بقاعدة البيانات السحابية لمحافظة ميسان.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Firebase SDKs & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnWRw8vF0qgTyVNhZoBHcseYKfH4H8LTA",
+            authDomain: "nabad-iraq-maysan.firebaseapp.com",
+            projectId: "nabad-iraq-maysan",
+            storageBucket: "nabad-iraq-maysan.firebasestorage.app",
+            messagingSenderId: "252254266871",
+            appId: "1:252254266871:web:f96c449f26ad9ff65efaf2",
+            measurementId: "G-3JR4CNE7ZB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'nabad-iraq-maysan-prod';
+        
+        let allRequests = [];
+        let allDonors = [];
+        let inboxMessages = [
+            { title: 'ترحيب بالمنصة', text: 'تم تفعيل الاتصال بقاعدة البيانات السحابية بنجاح.', time: 'الآن' }
+        ];
+
+        // Authenticate anonymously with fallback to prevent configuration-not-found crashes
+        signInAnonymously(auth).then(() => {
+            console.log("Firebase Auth Connected Successfully.");
+            initRealtimeListeners();
+        }).catch(err => {
+            console.warn("Firebase Auth skipped or not enabled yet. Initializing Firestore directly...", err);
+            // Fallback initialization so app works even if Auth is disabled in Firebase console
+            initRealtimeListeners();
+        });
+
+        function initRealtimeListeners() {
+            // Listen to Requests
+            const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests');
+            onSnapshot(reqRef, (snapshot) => {
+                allRequests = [];
+                snapshot.forEach(docSnap => {
+                    allRequests.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderHomeRequests();
+                renderAdminRequests();
+            }, (err) => console.error("Firestore Request Error:", err));
+
+            // Listen to Donors
+            const donorRef = collection(db, 'artifacts', appId, 'public', 'data', 'donorsList');
+            onSnapshot(donorRef, (snapshot) => {
+                allDonors = [];
+                snapshot.forEach(docSnap => {
+                    allDonors.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderDonors(allDonors);
+            }, (err) => console.error("Firestore Donor Error:", err));
+        }
+
+        // Expose functions globally
+        window.switchView = function(view) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.renderHomeRequests = function() {
+            const list = document.getElementById('homeRequestsList');
+            const verified = allRequests.filter(r => r.status === 'مؤكد وموثق');
+            if(verified.length === 0) {
+                list.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">لا توجد طلبات طارئة موشقة حالياً في ميسان.</div>`;
+                return;
+            }
+            list.innerHTML = verified.map(r => `
+                <div class="glass-card p-4 rounded-2xl space-y-2 border-r-4 border-brand-500">
+                    <div class="flex justify-between font-bold text-xs">
+                        <span class="text-brand-700 bg-red-50 px-2 py-0.5 rounded">${r.blood}</span>
+                        <span class="text-green-600 bg-green-50 px-2 py-0.5 rounded">موثق</span>
+                    </div>
+                    <div class="font-black text-sm text-gray-800">${r.name}</div>
+                    <div class="text-[11px] text-gray-500"><i class="fas fa-hospital text-brand-500"></i> ${r.hosp}</div>
+                </div>
+            `).join('');
+        }
+
+        window.handleRequestSubmit = async function(e) {
+            e.preventDefault();
+            const newReq = {
+                name: document.getElementById('rName').value,
+                phone: document.getElementById('rPhone').value,
+                blood: document.getElementById('rBlood').value,
+                hosp: document.getElementById('rHosp').value,
+                status: 'قيد المراجعة',
+                createdAt: new Date().toISOString()
+            };
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests'), newReq);
+                alert('تم تقديم طلبك بنجاح وسيتم مراجعته من قبل إدارة بنك الدم في ميسان.');
+                document.getElementById('reqForm').reset();
+                window.switchView('home');
+            } catch(ex) {
+                alert('حدث خطأ أثناء الإرسال: ' + ex.message);
+            }
+        }
+
+        window.handleDonorSubmit = async function(e) {
+            e.preventDefault();
+            const newDonor = {
+                name: document.getElementById('dName').value,
+                phone: document.getElementById('dPhone').value,
+                blood: document.getElementById('dBlood').value,
+                area: document.getElementById('dArea').value,
+                createdAt: new Date().toISOString()
+            };
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'donorsList'), newDonor);
+                alert('شكراً لتسجيلك كمتبرع لإنقاذ الأرواح في ميسان!');
+                document.getElementById('donorForm').reset();
+                window.switchView('search-donors');
+            } catch(ex) {
+                alert('حدث خطأ أثناء التسجيل: ' + ex.message);
+            }
+        }
+
+        window.renderDonors = function(donors) {
+            const list = document.getElementById('donorsList');
+            if(donors.length === 0) {
+                list.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-xs">لا يوجد متبرعون مسجلون بعد.</div>`;
+                return;
+            }
+            list.innerHTML = donors.map(d => `
+                <div class="glass-card p-3 rounded-2xl flex justify-between items-center text-xs">
+                    <div>
+                        <div class="font-black text-gray-800">${d.name} <span class="text-[10px] text-brand-700 bg-red-50 px-1.5 py-0.5 rounded font-bold">${d.blood}</span></div>
+                        <div class="text-gray-400 text-[10px] mt-0.5"><i class="fas fa-map-marker-alt"></i> ${d.area}</div>
+                    </div>
+                    <span class="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded font-bold">متبرع نشط</span>
+                </div>
+            `).join('');
+        }
+
+        window.filterDonors = function() {
+            const val = document.getElementById('searchBlood').value;
+            const filtered = val ? allDonors.filter(d => d.blood === val) : allDonors;
+            renderDonors(filtered);
+        }
+
+        window.renderAdminRequests = function() {
+            const list = document.getElementById('adminList');
+            if(allRequests.length === 0) {
+                list.innerHTML = `<div class="text-center py-6 text-gray-400">لا توجد طلبات جديدة.</div>`;
+                return;
+            }
+            list.innerHTML = allRequests.map(r => `
+                <div class="p-3 bg-gray-50 rounded-xl flex justify-between items-center">
+                    <div>
+                        <div class="font-bold">${r.name} - <span class="text-brand-700">${r.blood}</span></div>
+                        <div class="text-gray-500 text-[10px]">${r.hosp} | الحالة: <b>${r.status}</b></div>
+                    </div>
+                    ${r.status === 'قيد المراجعة' ? `
+                        <button onclick="approveRequest('${r.id}')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg font-bold">قبول وتوثيق</button>
+                    ` : `
+                        <span class="text-xs text-green-700 font-bold">تم الاعتماد</span>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        window.approveRequest = async function(id) {
+            try {
+                const reqDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'bloodRequests', id);
+                await updateDoc(reqDocRef, { status: 'مؤكد وموثق' });
+                alert('تم اعتماد الطلب ونشره بنجاح!');
+            } catch(ex) {
+                alert('فشل تحديث الطلب: ' + ex.message);
+            }
+        }
+    </script>
+</body>
+</html>
