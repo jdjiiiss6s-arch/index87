@@ -52,7 +52,7 @@
                 <button onclick="switchView('request-blood')" id="nav-request-blood" class="px-3 py-2 rounded-xl hover:bg-red-50">طلب دم طارئ</button>
                 <button onclick="switchView('donor-register')" id="nav-donor-register" class="px-3 py-2 rounded-xl hover:bg-red-50">تسجيل متبرع</button>
                 <button onclick="switchView('search-donors')" id="nav-search-donors" class="px-3 py-2 rounded-xl hover:bg-red-50">بحث المتبرعين</button>
-                <button onclick="switchView('admin-dashboard')" id="nav-admin-dashboard" class="px-3 py-2 rounded-xl text-purple-700 hover:bg-purple-50">الإدارة</button>
+                <button onclick="checkAdminAccess()" id="nav-admin-dashboard" class="px-3 py-2 rounded-xl text-purple-700 hover:bg-purple-50"><i class="fas fa-lock text-[10px]"></i> الإدارة</button>
             </nav>
 
             <div class="flex items-center gap-2">
@@ -92,7 +92,7 @@
             <div class="bg-gradient-to-r from-brand-700 to-brand-500 rounded-3xl p-6 text-white space-y-3 shadow-md">
                 <div class="text-xs bg-white/20 px-3 py-1 rounded-full inline-block font-bold">منصة محافظة ميسان الطبية الطارئة</div>
                 <h1 class="text-2xl font-black">قطرة منك.. حياة لغيرك</h1>
-                <p class="text-xs text-white/90">حالات طارئة مباشرة من مستشفيات ميسان. الطلبات تظهر للعامة فوراً دون انتظار الإدارة لتلبية نداءات الإنقاذ.</p>
+                <p class="text-xs text-white/90">حالات طارئة مباشرة من مستشفيات ميسان. الطلبات تظهر للعامة فوراً، وعند اكتمال التبرع يتم حذف الحالة مباشرة لتحديث المنصة.</p>
                 <div class="flex gap-2 pt-2">
                     <button onclick="switchView('request-blood')" class="bg-white text-brand-700 px-4 py-2.5 rounded-xl font-bold text-xs shadow hover:bg-gray-100 transition">أحتاج إلى متبرع عاجل</button>
                     <button onclick="switchView('donor-register')" class="bg-black/20 border border-white/30 text-white px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-black/35 transition">أريد التبرع بالدم</button>
@@ -240,8 +240,8 @@
         <section id="view-admin-dashboard" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="font-black text-brand-700 text-base">لوحة إشراف بنك الدم (ميسان)</h2>
-                    <span class="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-bold">إدارة الطوارئ</span>
+                    <h2 class="font-black text-brand-700 text-base">لوحة إشراف بنك الدم (محمية بكلمة سر)</h2>
+                    <span class="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-bold"><i class="fas fa-shield-alt"></i> مسؤل النظام</span>
                 </div>
                 <div id="adminList" class="space-y-2 text-xs">
                     <div class="text-center py-6 text-gray-400">جاري تحميل الطلبات للتدقيق...</div>
@@ -299,8 +299,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'nabad-iraq-maysan-prod';
-        
+        // الرمز السري الخاص بالمدير (غير قابل للوصول من قبل الآخرين)
+        const adminPin = "998877";
+
         let allRequests = [];
         let allDonors = [];
         let myInbox = [
@@ -317,7 +318,7 @@
 
         function initRealtimeListeners() {
             // Listen to Requests (Instant Live via onSnapshot)
-            const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests');
+            const reqRef = collection(db, 'bloodRequests');
             onSnapshot(reqRef, (snapshot) => {
                 allRequests = [];
                 snapshot.forEach(docSnap => {
@@ -329,7 +330,7 @@
             }, (err) => console.error("Firestore Request Error:", err));
 
             // Listen to Donors (Instant Live via onSnapshot)
-            const donorRef = collection(db, 'artifacts', appId, 'public', 'data', 'donorsList');
+            const donorRef = collection(db, 'donorsList');
             onSnapshot(donorRef, (snapshot) => {
                 allDonors = [];
                 snapshot.forEach(docSnap => {
@@ -354,6 +355,16 @@
             }
         }
 
+        // تحقق من الرمز السري قبل فتح لوحة الإدارة
+        window.checkAdminAccess = function() {
+            const enteredPin = prompt("أدخل الرمز السري الخاص بلوحة الإدارة:");
+            if (enteredPin === adminPin) {
+                switchView('admin-dashboard');
+            } else if (enteredPin !== null) {
+                showCustomModal('خطأ في الوصول', 'الرمز السري غير صحيح! هذه اللوحة مخصصة لإدارة المنصة فقط.', 'fa-lock');
+            }
+        }
+
         window.showCustomModal = function(title, message, iconClass = 'fa-bell') {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalMessage').innerText = message;
@@ -368,7 +379,7 @@
         window.renderHomeRequests = function() {
             const list = document.getElementById('homeRequestsList');
             if(allRequests.length === 0) {
-                list.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">لا توجد طلبات دم مسجلة حالياً.</div>`;
+                list.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">لا توجد طلبات دم مسجلة حالياً أو تم إنجازها بنجاح.</div>`;
                 return;
             }
             list.innerHTML = allRequests.map(r => `
@@ -382,15 +393,16 @@
                         <div class="text-[11px] text-gray-500 mt-0.5"><i class="fas fa-hospital text-brand-500"></i> ${r.hosp}</div>
                         ${r.notes ? `<div class="text-[11px] text-gray-600 bg-gray-50 p-2 rounded-xl mt-1.5"><i class="fas fa-notes-medical text-brand-500"></i> ${r.notes}</div>` : ''}
                     </div>
-                    <div class="flex gap-2 pt-1 border-t border-gray-100">
+                    <div class="flex gap-2 pt-1 border-t border-gray-100 flex-wrap">
                         <a href="tel:${r.phone}" class="flex-1 bg-green-600 text-white text-center py-2 rounded-xl text-xs font-bold shadow hover:bg-green-700 transition"><i class="fas fa-phone-alt"></i> اتصال بمقدم الطلب</a>
                         <button onclick="respondToRequest('${r.id}', '${r.name}')" class="bg-brand-500 text-white px-3 py-2 rounded-xl text-xs font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-hand-holding-medical"></i> متبرع</button>
                     </div>
+                    <button onclick="deleteRequest('${r.id}')" class="w-full bg-gray-100 text-emerald-700 hover:bg-emerald-50 py-1.5 rounded-xl text-[11px] font-bold transition border border-emerald-200"><i class="fas fa-check-circle"></i> تم التبرع بنجاح (إزالة الطلب)</button>
                 </div>
             `).join('');
         }
 
-        // Fast Instant Submission for Blood Request with live cloud sync
+        // Fast Instant Submission for Blood Request
         window.handleRequestSubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('reqSubmitBtn');
@@ -407,7 +419,7 @@
             };
 
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests'), newReq);
+                await addDoc(collection(db, 'bloodRequests'), newReq);
                 showCustomModal('تم النشر بنجاح!', 'تم إرسال طلبك ونشره فوراً في الواجهة الرئيسية لجميع المتبرعين في ميسان.', 'fa-check-circle');
                 document.getElementById('reqForm').reset();
                 window.switchView('home');
@@ -435,7 +447,7 @@
             };
 
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'donorsList'), newDonor);
+                await addDoc(collection(db, 'donorsList'), newDonor);
                 showCustomModal('شكراً لانضمامك لنبض العراق!', 'تم حفظ وتحديث بياناتك كمتبرع متاح فوراً.', 'fa-heart');
                 document.getElementById('donorForm').reset();
                 window.switchView('search-donors');
@@ -472,14 +484,12 @@
             renderDonors(filtered);
         }
 
-        // When a donor responds to a request, notify the seeker via Inbox with donor details
         window.respondToRequest = function(reqId, reqName) {
             const donorName = prompt("أدخل اسمك الكريم كمتبرع لهذه الحالة:", "متبرع متطوع");
             if(!donorName) return;
             const donorPhone = prompt("أدخل رقم هاتفك ليتصل بك طالب الدم:", "0770...");
             if(!donorPhone) return;
 
-            // Add private notification to inbox
             const notification = {
                 id: Date.now().toString(),
                 title: `🎉 توفر متبرع لحالة: ${reqName}`,
@@ -510,10 +520,10 @@
         }
 
         window.deleteRequest = async function(id) {
-            if(confirm("هل أنت متأكد من اكتمال الحالة وإزالة الطلب؟")) {
+            if(confirm("هل تم اكتمال التبرع وتريد إزالة الحالة من المنصة نهائياً؟")) {
                 try {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'bloodRequests', id));
-                    showCustomModal('تم إزالة الطلب بنجاح', 'تم تحديث قائمة الحالات الطارئة.', 'fa-check-circle');
+                    await deleteDoc(doc(db, 'bloodRequests', id));
+                    showCustomModal('تم إزالة الطلب بنجاح', 'تم تحديث الواجهة وإزالة الطلب لانتهاء الحاجة.', 'fa-check-circle');
                 } catch(ex) {
                     alert(ex.message);
                 }
