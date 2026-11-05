@@ -52,6 +52,8 @@
                 <button onclick="switchView('request-blood')" id="nav-request-blood" class="px-3 py-2 rounded-xl hover:bg-red-50">طلب دم طارئ</button>
                 <button onclick="switchView('donor-register')" id="nav-donor-register" class="px-3 py-2 rounded-xl hover:bg-red-50">تسجيل متبرع</button>
                 <button onclick="switchView('search-donors')" id="nav-search-donors" class="px-3 py-2 rounded-xl hover:bg-red-50">بحث المتبرعين</button>
+                <button onclick="switchView('my-requests')" id="nav-my-requests" class="px-3 py-2 rounded-xl hover:bg-red-50">طلباتي والاستجابات</button>
+                <button onclick="switchView('my-donations')" id="nav-my-donations" class="px-3 py-2 rounded-xl hover:bg-red-50">سجل تبرعاتي</button>
                 <button onclick="checkAdminAccess()" id="nav-admin-dashboard" class="px-3 py-2 rounded-xl text-purple-700 hover:bg-purple-50"><i class="fas fa-lock text-[10px]"></i> الإدارة</button>
             </nav>
 
@@ -72,11 +74,11 @@
         <button onclick="switchView('request-blood')" class="flex flex-col items-center gap-1">
             <i class="fas fa-hand-holding-medical text-base"></i> طلب دم
         </button>
-        <button onclick="switchView('donor-register')" class="flex flex-col items-center gap-1">
-            <i class="fas fa-user-plus text-base"></i> متبرع
-        </button>
         <button onclick="switchView('search-donors')" class="flex flex-col items-center gap-1">
             <i class="fas fa-search text-base"></i> بحث
+        </button>
+        <button onclick="switchView('my-requests')" class="flex flex-col items-center gap-1">
+            <i class="fas fa-list-alt text-base"></i> طلباتي
         </button>
         <button onclick="switchView('inbox')" class="flex flex-col items-center gap-1 relative">
             <i class="fas fa-inbox text-base"></i> البريد
@@ -92,7 +94,7 @@
             <div class="bg-gradient-to-r from-brand-700 to-brand-500 rounded-3xl p-6 text-white space-y-3 shadow-md">
                 <div class="text-xs bg-white/20 px-3 py-1 rounded-full inline-block font-bold">منصة محافظة ميسان الطبية الطارئة</div>
                 <h1 class="text-2xl font-black">قطرة منك.. حياة لغيرك</h1>
-                <p class="text-xs text-white/90">حالات طارئة مباشرة من مستشفيات ميسان. الطلبات تظهر للعامة فوراً، وعند اكتمال التبرع يتم حذف الحالة أو إزالتها مباشرة.</p>
+                <p class="text-xs text-white/90">حالات طارئة مباشرة من مستشفيات ميسان. الطلبات النشطة تظهر للعامة، وعند التنسيق أو اكتمال التبرع تختفي تلقائياً من الواجهة.</p>
                 <div class="flex gap-2 pt-2">
                     <button onclick="switchView('request-blood')" class="bg-white text-brand-700 px-4 py-2.5 rounded-xl font-bold text-xs shadow hover:bg-gray-100 transition">أحتاج إلى متبرع عاجل</button>
                     <button onclick="switchView('donor-register')" class="bg-black/20 border border-white/30 text-white px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-black/35 transition">أريد التبرع بالدم</button>
@@ -118,7 +120,7 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <h2 class="font-black text-gray-800 text-sm">طلبات الدم النشطة والطارئة في ميسان</h2>
-                    <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full font-bold"><i class="fas fa-circle text-[8px] animate-pulse"></i> نشر مباشر</span>
+                    <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full font-bold"><i class="fas fa-circle text-[8px] animate-pulse"></i> متزامن عبر السحابة</span>
                 </div>
                 <div id="homeRequestsList" class="grid sm:grid-cols-2 gap-3">
                     <div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">جاري تحميل الطلبات من السحابة...</div>
@@ -129,7 +131,7 @@
         <!-- REQUEST BLOOD VIEW -->
         <section id="view-request-blood" class="view-section hidden max-w-lg mx-auto">
             <div class="glass-card p-5 rounded-3xl space-y-4">
-                <h2 class="font-black text-brand-700 text-base border-b pb-2">طلب دم طارئ (يظهر فوراً بدون انتظار)</h2>
+                <h2 class="font-black text-brand-700 text-base border-b pb-2">طلب دم طارئ (يظهر بحالة نشطة فوراً)</h2>
                 <form id="reqForm" onsubmit="handleRequestSubmit(event)" class="space-y-3 text-xs font-bold">
                     <div>
                         <label class="text-gray-600 block mb-1">اسم المريض الكامل</label>
@@ -137,7 +139,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-gray-600 block mb-1">رقم الهاتف (للاتصال بك)</label>
+                            <label class="text-gray-600 block mb-1">رقم الهاتف (للتنسيق الآمن)</label>
                             <input type="tel" id="rPhone" required placeholder="0770..." class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
                         </div>
                         <div>
@@ -236,11 +238,37 @@
             </div>
         </section>
 
+        <!-- MY REQUESTS & RESPONSES VIEW (صفحة طالب الدم لعرض طلباته والاستجابات) -->
+        <section id="view-my-requests" class="view-section hidden space-y-4">
+            <div class="glass-card p-5 rounded-3xl space-y-4">
+                <div class="border-b pb-2 flex justify-between items-center">
+                    <h2 class="font-black text-brand-700 text-base">طلباتي والاستجابات الواردة (إدارة المريض)</h2>
+                    <span class="text-[10px] text-gray-400">قبول، رفض، أو إنهاء الحاجة</span>
+                </div>
+                <div id="myRequestsContainer" class="space-y-4 text-xs">
+                    <div class="text-center py-6 text-gray-400">جاري تحميل طلباتك السحابية...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MY DONATIONS VIEW (صفحة المتبرع لعرض استجاباته وحالتها) -->
+        <section id="view-my-donations" class="view-section hidden space-y-4">
+            <div class="glass-card p-5 rounded-3xl space-y-4">
+                <div class="border-b pb-2 flex justify-between items-center">
+                    <h2 class="font-black text-brand-700 text-base">سجل استجابات التبرع الخاصة بي</h2>
+                    <span class="text-[10px] text-gray-400">متابعة حالات القبول والرفض</span>
+                </div>
+                <div id="myDonationsContainer" class="space-y-3 text-xs">
+                    <div class="text-center py-6 text-gray-400">جاري تحميل سجل تبرعاتك...</div>
+                </div>
+            </div>
+        </section>
+
         <!-- ADMIN VIEW -->
         <section id="view-admin-dashboard" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="font-black text-brand-700 text-base">لوحة إشراف بنك الدم (ميسان)</h2>
+                    <h2 class="font-black text-brand-700 text-base">لوحة إشراف بنك الدم (محمية بكلمة سر)</h2>
                     <span class="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-bold"><i class="fas fa-shield-alt"></i> إدارة الطوارئ</span>
                 </div>
                 <div id="adminList" class="space-y-2 text-xs">
@@ -253,13 +281,13 @@
         <section id="view-inbox" class="view-section hidden max-w-lg mx-auto">
             <div class="glass-card p-5 rounded-3xl space-y-4">
                 <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="font-black text-gray-800 text-sm">البريد الوارد والتنبيهات الخاصة</h2>
+                    <h2 class="font-black text-gray-800 text-sm">البريد الوارد والتنبيهات الفورية</h2>
                     <button onclick="clearInbox()" class="text-[10px] text-brand-500 font-bold hover:underline">مسح الكل</button>
                 </div>
                 <div id="inboxList" class="space-y-3 text-xs">
                     <div class="p-3 bg-red-50 rounded-2xl text-brand-700 font-medium border border-red-100">
                         <div class="font-black mb-1"><i class="fas fa-info-circle"></i> ترحيب بمنصة نبض العراق</div>
-                        أهلاً بك. ستصلك هنا الإشعارات الفورية عند توفر متبرع أو استجابة لحالتك الطارئة مع أرقام هواتف المتبرعين مباشرة.
+                        أهلاً بك. ستصلك هنا الإشعارات الفورية عند استجابة المتبرعين وحالات التنسيق السحابي.
                     </div>
                 </div>
             </div>
@@ -267,7 +295,7 @@
 
     </main>
 
-    <!-- Modal Countdown / Alert Box -->
+    <!-- Modal Notification / Alert Box -->
     <div id="customModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl animate-scaleIn">
             <div id="modalIcon" class="w-14 h-14 bg-red-100 text-brand-700 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black">
@@ -279,7 +307,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs & App Logic -->
+    <!-- Firebase SDKs & Enhanced App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -299,14 +327,20 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // الرمز السري الصعب الخاص بك للوحة الإدارة
+        // الرمز السري الصعب الخاص بلوحة الإدارة
         const adminPin = "Maysan@9988#Blood2026";
+
+        // معرف فريد للجهاز الحالي لكي يتمكن المستخدم من رؤية طلباته واستجاباته عبر المتصفح
+        let myDeviceUUID = localStorage.getItem('nabad_device_uuid');
+        if(!myDeviceUUID) {
+            myDeviceUUID = 'usr_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('nabad_device_uuid', myDeviceUUID);
+        }
 
         let allRequests = [];
         let allDonors = [];
-        let myInbox = [
-            { id: '1', title: 'تنبيه النظام', text: 'تم تفعيل نظام الإشعارات الفورية للبريد الوارد بنجاح.', time: 'الآن', read: false }
-        ];
+        let allResponses = [];
+        let myInbox = [];
 
         signInAnonymously(auth).then(() => {
             console.log("Firebase Auth Connected.");
@@ -317,33 +351,57 @@
         });
 
         function initRealtimeListeners() {
-            // Listen to Requests (Instant Live via onSnapshot)
-            const reqRef = collection(db, 'bloodRequests');
-            onSnapshot(reqRef, (snapshot) => {
+            // 1. الاستماع لطلبات الدم (نشط، قيد التنسيق، مكتمل) سحابياً وبشكل فوري
+            onSnapshot(collection(db, 'bloodRequests'), (snapshot) => {
                 allRequests = [];
                 snapshot.forEach(docSnap => {
                     allRequests.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 renderHomeRequests();
+                renderMyRequests();
                 renderAdminRequests();
                 updateStats();
-            }, (err) => console.error("Firestore Request Error:", err));
+            });
 
-            // Listen to Donors (Instant Live via onSnapshot)
-            const donorRef = collection(db, 'donorsList');
-            onSnapshot(donorRef, (snapshot) => {
+            // 2. الاستماع للمتبرعين
+            onSnapshot(collection(db, 'donorsList'), (snapshot) => {
                 allDonors = [];
                 snapshot.forEach(docSnap => {
                     allDonors.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 renderDonors(allDonors);
                 updateStats();
-            }, (err) => console.error("Firestore Donor Error:", err));
+            });
+
+            // 3. الاستماع لاستجابات المتبرعين
+            onSnapshot(collection(db, 'bloodResponses'), (snapshot) => {
+                allResponses = [];
+                snapshot.forEach(docSnap => {
+                    allResponses.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderMyRequests();
+                renderMyDonations();
+            });
+
+            // 4. الاستماع للبريد الوارد الخاص بهذا الجهاز
+            onSnapshot(collection(db, 'userInbox'), (snapshot) => {
+                const loadedInbox = [];
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if(data.targetUUID === myDeviceUUID) {
+                        loadedInbox.push({ id: docSnap.id, ...data });
+                    }
+                });
+                myInbox = loadedInbox;
+                updateInboxUI();
+            });
         }
 
         function updateStats() {
             document.getElementById('statDonors').innerText = allDonors.length;
-            document.getElementById('statRequests').innerText = allRequests.length;
+            // العد للطلبات النشطة فقط في الواجهة العامة
+            const activeCount = allRequests.filter(r => r.status === 'نشط' || !r.status).length;
+            document.getElementById('statRequests').innerText = activeCount;
         }
 
         window.switchView = function(view) {
@@ -355,13 +413,12 @@
             }
         }
 
-        // حماية لوحة الإدارة برمز سري قوي
         window.checkAdminAccess = function() {
             const enteredPin = prompt("أدخل الرمز السري الخاص بلوحة الإدارة:");
             if (enteredPin === adminPin) {
                 switchView('admin-dashboard');
             } else if (enteredPin !== null) {
-                showCustomModal('خطأ في الوصول', 'الرمز السري غير صحيح! هذه اللوحة مخصصة لإدارة المنصة فقط.', 'fa-lock');
+                showCustomModal('خطأ في الوصول', 'الرمز السري غير صحيح!', 'fa-lock');
             }
         }
 
@@ -376,33 +433,34 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
+        // 1. عرض الطلبات النشطة للعامة (فقط الطلبات التي حالتها نشطة)
         window.renderHomeRequests = function() {
             const list = document.getElementById('homeRequestsList');
-            if(allRequests.length === 0) {
-                list.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">لا توجد طلبات دم مسجلة حالياً أو تم إنجازها بنجاح.</div>`;
+            const activeReqs = allRequests.filter(r => r.status === 'نشط' || !r.status);
+            
+            if(activeReqs.length === 0) {
+                list.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">لا توجد طلبات دم نشطة حالياً.</div>`;
                 return;
             }
-            list.innerHTML = allRequests.map(r => `
+            list.innerHTML = activeReqs.map(r => `
                 <div class="glass-card p-4 rounded-2xl space-y-3 border-r-4 border-brand-500">
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-brand-700 bg-red-50 px-2.5 py-1 rounded-full font-bold">${r.blood}</span>
-                        <span class="text-[10px] text-gray-400"><i class="fas fa-clock"></i> ${new Date(r.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-bold">نشط</span>
                     </div>
                     <div>
                         <div class="font-black text-sm text-gray-800">${r.name}</div>
                         <div class="text-[11px] text-gray-500 mt-0.5"><i class="fas fa-hospital text-brand-500"></i> ${r.hosp}</div>
                         ${r.notes ? `<div class="text-[11px] text-gray-600 bg-gray-50 p-2 rounded-xl mt-1.5"><i class="fas fa-notes-medical text-brand-500"></i> ${r.notes}</div>` : ''}
                     </div>
-                    <div class="flex gap-2 pt-1 border-t border-gray-100 flex-wrap">
-                        <a href="tel:${r.phone}" class="flex-1 bg-green-600 text-white text-center py-2 rounded-xl text-xs font-bold shadow hover:bg-green-700 transition"><i class="fas fa-phone-alt"></i> اتصال بمقدم الطلب</a>
-                        <button onclick="respondToRequest('${r.id}', '${r.name}')" class="bg-brand-500 text-white px-3 py-2 rounded-xl text-xs font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-hand-holding-medical"></i> متبرع</button>
+                    <div class="pt-1 border-t border-gray-100">
+                        <button onclick="respondToRequest('${r.id}', '${r.name}', '${r.deviceUUID}')" class="w-full bg-brand-500 text-white text-center py-2.5 rounded-xl text-xs font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-hand-holding-medical"></i> أنا متبرع مستجيب لهذه الحالة</button>
                     </div>
-                    <button onclick="deleteRequest('${r.id}')" class="w-full bg-gray-100 text-emerald-700 hover:bg-emerald-50 py-1.5 rounded-xl text-[11px] font-bold transition border border-emerald-200"><i class="fas fa-check-circle"></i> تم التبرع بنجاح (إزالة الطلب)</button>
                 </div>
             `).join('');
         }
 
-        // نشر طلب الدم الفوري المباشر مع تصحيح المسار ليعمل 100%
+        // نشر طلب دم جديد بحالة "نشط"
         window.handleRequestSubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('reqSubmitBtn');
@@ -410,19 +468,21 @@
             btn.innerText = `جاري النشر الفوري...`;
 
             const newReq = {
+                deviceUUID: myDeviceUUID,
                 name: document.getElementById('rName').value,
                 phone: document.getElementById('rPhone').value,
                 blood: document.getElementById('rBlood').value,
                 hosp: document.getElementById('rHosp').value,
                 notes: document.getElementById('rNotes').value || '',
+                status: 'نشط',
                 createdAt: new Date().toISOString()
             };
 
             try {
                 await addDoc(collection(db, 'bloodRequests'), newReq);
-                showCustomModal('تم النشر بنجاح!', 'تم إرسال طلبك ونشره فوراً في الواجهة الرئيسية لجميع المتبرعين في ميسان.', 'fa-check-circle');
+                showCustomModal('تم النشر بنجاح!', 'تم إرسال طلبك ونشره بحالة نشطة فوراً.', 'fa-check-circle');
                 document.getElementById('reqForm').reset();
-                window.switchView('home');
+                window.switchView('my-requests');
             } catch(ex) {
                 showCustomModal('خطأ في النشر', ex.message, 'fa-exclamation-triangle');
             } finally {
@@ -439,6 +499,7 @@
             btn.innerText = `جاري الحفظ الفوري...`;
 
             const newDonor = {
+                deviceUUID: myDeviceUUID,
                 name: document.getElementById('dName').value,
                 phone: document.getElementById('dPhone').value,
                 blood: document.getElementById('dBlood').value,
@@ -448,7 +509,7 @@
 
             try {
                 await addDoc(collection(db, 'donorsList'), newDonor);
-                showCustomModal('شكراً لانضمامك لنبض العراق!', 'تم حفظ وتحديث بياناتك كمتبرع متاح فوراً.', 'fa-heart');
+                showCustomModal('شكراً لانضمامك لنبض العراق!', 'تم حفظ وتحديث بياناتك كمتبرع متاح.', 'fa-heart');
                 document.getElementById('donorForm').reset();
                 window.switchView('search-donors');
             } catch(ex) {
@@ -471,9 +532,7 @@
                         <div class="font-black text-gray-800 text-sm">${d.name} <span class="text-[10px] text-brand-700 bg-red-50 px-2 py-0.5 rounded font-bold">${d.blood}</span></div>
                         <div class="text-gray-400 text-[10px] mt-1"><i class="fas fa-map-marker-alt text-brand-500"></i> ${d.area}</div>
                     </div>
-                    <a href="tel:${d.phone}" class="bg-green-600 text-white px-3 py-2 rounded-xl font-bold shadow hover:bg-green-700 transition flex items-center gap-1">
-                        <i class="fas fa-phone-alt"></i> اتصال
-                    </a>
+                    <span class="text-[10px] text-gray-400 bg-gray-50 px-2.5 py-1.5 rounded-xl font-bold">متاح بالتنسيق</span>
                 </div>
             `).join('');
         }
@@ -484,35 +543,168 @@
             renderDonors(filtered);
         }
 
-        window.respondToRequest = function(reqId, reqName) {
+        // 2 & 3. استجابة متبرع للطلب وتسجيلها في Firebase وإرسال إشعار فوري لصاحب الطلب
+        window.respondToRequest = async function(reqId, reqName, seekerUUID) {
             const donorName = prompt("أدخل اسمك الكريم كمتبرع لهذه الحالة:", "متبرع متطوع");
             if(!donorName) return;
-            const donorPhone = prompt("أدخل رقم هاتفك ليتصل بك طالب الدم:", "0770...");
+            const donorPhone = prompt("أدخل رقم هاتفك ليتواصل معك طالب الدم للتنسيق:", "0770...");
             if(!donorPhone) return;
 
-            const notification = {
-                id: Date.now().toString(),
-                title: `🎉 توفر متبرع لحالة: ${reqName}`,
-                text: `استجيب لطلبك! المتبرع الكريم: ${donorName} - رقم الهاتف: ${donorPhone}. بادر بالاتصال به فوراً.`,
-                time: 'الآن',
-                read: false
+            const responseData = {
+                requestId: reqId,
+                requestName: reqName,
+                seekerUUID: seekerUUID || '',
+                donorUUID: myDeviceUUID,
+                donorName: donorName,
+                donorPhone: donorPhone,
+                status: 'قيد الانتظار',
+                createdAt: new Date().toISOString()
             };
-            myInbox.unshift(notification);
-            updateInboxUI();
-            showCustomModal('تم إرسال استجابتك بنجاح!', `تم إشعار طالب الدم ببياناتك وهاتفك (${donorPhone}) في بريده الوارد. شكراً لإنقاذك الحياة!`, 'fa-heart');
+
+            try {
+                // تسجيل الاستجابة سحابياً
+                await addDoc(collection(db, 'bloodResponses'), responseData);
+
+                // إرسال إشعار فوري لصاحب الطلب في البريد الوارد
+                if(seekerUUID) {
+                    await addDoc(collection(db, 'userInbox'), {
+                        targetUUID: seekerUUID,
+                        title: `🔔 استجابة جديدة لطلب: ${reqName}`,
+                        text: `استجاب المتبرع الكريم (${donorName}) لطلبك. بادر بمراجعة قسم "طلباتي" لقبول الاستجابة أو رفضها.`,
+                        time: 'الآن',
+                        read: false,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                showCustomModal('تم إرسال استجابتك بنجاح!', 'تم تسجيل استجابتك سحابياً وإشعار طالب الدم فوراً.', 'fa-heart');
+                switchView('my-donations');
+            } catch(ex) {
+                showCustomModal('خطأ في الاستجابة', ex.message, 'fa-exclamation-triangle');
+            }
+        }
+
+        // 4, 5 & 6 & 8. صفحة طالب الدم لعرض طلباته والاستجابات وإدارتها (قبول/رفض وتغيير الحالة إلى "قيد التنسيق" أو "مكتمل")
+        window.renderMyRequests = function() {
+            const container = document.getElementById('myRequestsContainer');
+            if(!container) return;
+
+            const myReqs = allRequests.filter(r => r.deviceUUID === myDeviceUUID);
+            if(myReqs.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-400">ليس لديك أي طلبات دم مسجلة من هذا الجهاز حالياً.</div>`;
+                return;
+            }
+
+            container.innerHTML = myReqs.map(r => {
+                const reqResponses = allResponses.filter(resp => resp.requestId === r.id);
+                return `
+                    <div class="glass-card p-4 rounded-2xl space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-gray-800 text-sm">${r.name} (${r.blood})</span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${r.status === 'مكتمل' ? 'bg-gray-100 text-gray-600' : r.status === 'قيد التنسيق' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-600'}">الحالة: ${r.status || 'نشط'}</span>
+                        </div>
+                        <div class="text-[11px] text-gray-500"><i class="fas fa-hospital text-brand-500"></i> ${r.hosp} | هاتف المريض: ${r.phone}</div>
+                        
+                        <div class="border-t pt-2 space-y-2">
+                            <div class="font-bold text-gray-700 text-[11px]">استجابات المتبرعين الواردة (${reqResponses.length}):</div>
+                            ${reqResponses.length === 0 ? `<div class="text-gray-400 text-[10px]">لا توجد استجابات متبرعين حتى الآن.</div>` : 
+                                reqResponses.map(resp => `
+                                    <div class="bg-gray-50 p-2.5 rounded-xl flex justify-between items-center text-[11px]">
+                                        <div>
+                                            <div class="font-bold text-gray-800">${resp.donorName}</div>
+                                            <div class="text-gray-500">حالة الاستجابة: <span class="text-brand-700 font-bold">${resp.status}</span></div>
+                                            ${resp.status === 'مقبولة' ? `<div class="text-emerald-700 font-bold mt-0.5"><i class="fas fa-phone-alt"></i> هاتف المتبرع للتنسيق: ${resp.donorPhone}</div>` : ''}
+                                        </div>
+                                        <div class="flex gap-1.5">
+                                            ${resp.status === 'قيد الانتظار' ? `
+                                                <button onclick="updateResponseStatus('${resp.id}', '${r.id}', 'مقبولة', '${resp.donorUUID}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg font-bold">قبول</button>
+                                                <button onclick="updateResponseStatus('${resp.id}', '${r.id}', 'مرفوضة', '${resp.donorUUID}')" class="bg-red-600 text-white px-2.5 py-1.5 rounded-lg font-bold">رفض</button>
+                                            ` : `<span class="text-gray-400 font-bold">${resp.status}</span>`}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                        </div>
+
+                        ${r.status !== 'مكتمل' ? `
+                            <button onclick="completeRequest('${r.id}')" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-[11px] transition hover:bg-black"><i class="fas fa-check-double"></i> تأكيد انتهاء الحاجة (تحويل الحالة إلى مكتمل)</button>
+                        ` : `<div class="text-center text-gray-400 font-bold text-[10px]">تم اكتمال هذا الطلب وأرشفته.</div>`}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // تحديث حالة الاستجابة (عند القبول تتغير حالة الطلب إلى "قيد التنسيق" ويختفي من العامة)
+        window.updateResponseStatus = async function(responseId, requestId, newStatus, donorUUID) {
+            try {
+                await updateDoc(doc(db, 'bloodResponses', responseId), { status: newStatus });
+                
+                if (newStatus === 'مقبولة') {
+                    await updateDoc(doc(db, 'bloodRequests', requestId), { status: 'قيد التنسيق' });
+                }
+
+                // إرسال إشعار للمتبرع بنتيجة الاستجابة
+                if(donorUUID) {
+                    await addDoc(collection(db, 'userInbox'), {
+                        targetUUID: donorUUID,
+                        title: `📋 تحديث حالة استجابتك`,
+                        text: `تمت ${newStatus === 'مقبولة' ? 'قبول 🎉' : 'اعتذار عن'} استجابتك لطلب الدم.`,
+                        time: 'الآن',
+                        read: false,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                showCustomModal('تم التحديث بنجاح', `تم تحديث الاستجابة إلى (${newStatus}).`, 'fa-check-circle');
+            } catch(ex) {
+                alert(ex.message);
+            }
+        }
+
+        // تحويل الحالة إلى مكتمل وأرشفتها
+        window.completeRequest = async function(requestId) {
+            if(confirm("هل أنت متأكد من انتهاء الحاجة للدم؟ سيتم تحويل الطلب إلى مكتمل.")) {
+                try {
+                    await updateDoc(doc(db, 'bloodRequests', requestId), { status: 'مكتمل' });
+                    showCustomModal('تم الأرشفة بنجاح', 'تم تحويل حالة الطلب إلى مكتمل وإزالته من الواجهة النشطة.', 'fa-check-circle');
+                } catch(ex) {
+                    alert(ex.message);
+                }
+            }
+        }
+
+        // 7. صفحة المتبرع الخاصة (عرض استجاباته وحالة كل استجابة)
+        window.renderMyDonations = function() {
+            const container = document.getElementById('myDonationsContainer');
+            if(!container) return;
+
+            const myDons = allResponses.filter(resp => resp.donorUUID === myDeviceUUID);
+            if(myDons.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-400">لم تقم بأي استجابة لطلبات الدم من هذا الجهاز حتى الآن.</div>`;
+                return;
+            }
+
+            container.innerHTML = myDons.map(d => `
+                <div class="glass-card p-3.5 rounded-2xl flex justify-between items-center text-xs">
+                    <div>
+                        <div class="font-black text-gray-800 text-sm">طلب مريض: ${d.requestName}</div>
+                        <div class="text-gray-400 text-[10px] mt-1">حالة الاستجابة: <span class="font-bold ${d.status === 'مقبولة' ? 'text-emerald-600' : d.status === 'مرفوضة' ? 'text-red-600' : 'text-brand-700'}">${d.status}</span></div>
+                    </div>
+                    ${d.status === 'مقبولة' ? `<span class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl font-bold">تم القبول بنجاح</span>` : `<span class="bg-gray-50 text-gray-500 px-3 py-1.5 rounded-xl font-bold">قيد المتابعة</span>`}
+                </div>
+            `).join('');
         }
 
         window.renderAdminRequests = function() {
             const list = document.getElementById('adminList');
             if(!list) return;
             if(allRequests.length === 0) {
-                list.innerHTML = `<div class="text-center py-6 text-gray-400">لا توجد طلبات دم نشطة حالياً.</div>`;
+                list.innerHTML = `<div class="text-center py-6 text-gray-400">لا توجد طلبات دم مسجلة حالياً.</div>`;
                 return;
             }
             list.innerHTML = allRequests.map(r => `
-                <div class="p-3 bg-gray-50 rounded-xl flex justify-between items-center">
+                <div class="p-3 bg-gray-50 rounded-xl flex justify-between items-center text-xs">
                     <div>
-                        <div class="font-bold">${r.name} - <span class="text-brand-700">${r.blood}</span></div>
+                        <div class="font-bold">${r.name} - <span class="text-brand-700">${r.blood}</span> (${r.status || 'نشط'})</div>
                         <div class="text-gray-500 text-[10px]">${r.hosp} | الهاتف: ${r.phone}</div>
                     </div>
                     <button onclick="deleteRequest('${r.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg font-bold hover:bg-red-700 transition">حذف (اكتمال)</button>
@@ -521,7 +713,7 @@
         }
 
         window.deleteRequest = async function(id) {
-            if(confirm("هل أنت متأكد من اكتمال الحالة وإزالة الطلب نهائياً؟")) {
+            if(confirm("هل أنت متأكد من حذف هذا الطلب نهائياً بصفتك المشرف؟")) {
                 try {
                     await deleteDoc(doc(db, 'bloodRequests', id));
                     showCustomModal('تم إزالة الطلب بنجاح', 'تم تحديث قائمة الحالات الطارئة.', 'fa-check-circle');
@@ -533,6 +725,7 @@
 
         window.updateInboxUI = function() {
             const list = document.getElementById('inboxList');
+            if(!list) return;
             const unreadCount = myInbox.filter(i => !i.read).length;
             
             const badge = document.getElementById('unreadBadge');
@@ -546,6 +739,11 @@
             } else {
                 badge.classList.add('hidden');
                 mobileBadge.classList.add('hidden');
+            }
+
+            if(myInbox.length === 0) {
+                list.innerHTML = `<div class="p-3 bg-red-50 rounded-2xl text-gray-500 text-center">لا توجد إشعارات جديدة حالياً.</div>`;
+                return;
             }
 
             list.innerHTML = myInbox.map(item => `
