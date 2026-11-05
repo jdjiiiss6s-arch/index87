@@ -238,7 +238,7 @@
             </div>
         </section>
 
-        <!-- MY REQUESTS VIEW (طلباتي والاستجابات ونظام التسليم والاستلام لطالب الدم) -->
+        <!-- MY REQUESTS VIEW -->
         <section id="view-my-requests" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-4">
                 <div class="border-b pb-2 flex justify-between items-center">
@@ -251,7 +251,7 @@
             </div>
         </section>
 
-        <!-- MY DONATIONS VIEW (سجل التبرعات والتسليم والاستلام للمتبرع) -->
+        <!-- MY DONATIONS VIEW -->
         <section id="view-my-donations" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-4">
                 <div class="border-b pb-2 flex justify-between items-center">
@@ -345,7 +345,6 @@
         });
 
         function initRealtimeListeners() {
-            // 1. الاستماع لطلبات الدم
             onSnapshot(collection(db, 'bloodRequests'), (snapshot) => {
                 allRequests = [];
                 snapshot.forEach(docSnap => {
@@ -355,9 +354,8 @@
                 renderMyRequests();
                 renderAdminRequests();
                 updateStats();
-            });
+            }, (error) => console.error("Request listener error:", error));
 
-            // 2. الاستماع للمتبرعين
             onSnapshot(collection(db, 'donorsList'), (snapshot) => {
                 allDonors = [];
                 snapshot.forEach(docSnap => {
@@ -365,9 +363,8 @@
                 });
                 renderDonors(allDonors);
                 updateStats();
-            });
+            }, (error) => console.error("Donor listener error:", error));
 
-            // 3. الاستماع لاستجابات المتبرعين ونظام التسليم والاستلام
             onSnapshot(collection(db, 'bloodResponses'), (snapshot) => {
                 allResponses = [];
                 snapshot.forEach(docSnap => {
@@ -375,9 +372,8 @@
                 });
                 renderMyRequests();
                 renderMyDonations();
-            });
+            }, (error) => console.error("Response listener error:", error));
 
-            // 4. البريد الوارد والتنبيهات
             onSnapshot(collection(db, 'userInbox'), (snapshot) => {
                 const loaded = [];
                 snapshot.forEach(docSnap => {
@@ -388,7 +384,7 @@
                 });
                 myInbox = loaded;
                 updateInboxUI();
-            });
+            }, (error) => console.error("Inbox listener error:", error));
         }
 
         function updateStats() {
@@ -426,7 +422,6 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
-        // عرض الطلبات النشطة للعامة
         window.renderHomeRequests = function() {
             const list = document.getElementById('homeRequestsList');
             const activeReqs = allRequests.filter(r => r.status === 'نشط' || !r.status);
@@ -453,10 +448,13 @@
             `).join('');
         }
 
-        // نشر طلب دم جديد
+        // نشر طلب دم جديد مع معالجة الأخطاء
         window.handleRequestSubmit = async function(e) {
             e.preventDefault();
-            if(!currentUid) return;
+            if(!currentUid) {
+                showCustomModal('انتظر قليلاً', 'جاري الاتصال بالسحابة، حاول بعد ثانية.', 'fa-spinner');
+                return;
+            }
             const btn = document.getElementById('reqSubmitBtn');
             btn.disabled = true;
             btn.innerText = `جاري النشر الفوري...`;
@@ -485,7 +483,6 @@
             }
         }
 
-        // تسجيل متبرع جديد
         window.handleDonorSubmit = async function(e) {
             e.preventDefault();
             if(!currentUid) return;
@@ -538,7 +535,6 @@
             renderDonors(filtered);
         }
 
-        // استجابة متبرع للطلب
         window.respondToRequest = async function(reqId, reqName, creatorUid) {
             if(!currentUid) return;
             const donorName = prompt("أدخل اسمك الكريم كمتبرع لهذه الحالة:", "متبرع متطوع");
@@ -553,7 +549,7 @@
                 donorUid: currentUid,
                 donorName: donorName,
                 donorPhone: donorPhone,
-                status: 'قيد الانتظار', // قيد الانتظار، مقبولة، مرفوضة
+                status: 'قيد الانتظار',
                 donorConfirmed: false,
                 donorConfirmedAt: null,
                 seekerConfirmed: false,
@@ -582,7 +578,6 @@
             }
         }
 
-        // صفحة طالب الدم لعرض طلباته وإدارة الاستجابات ونظام التسليم والاستلام
         window.renderMyRequests = function() {
             const container = document.getElementById('myRequestsContainer');
             if(!container || !currentUid) return;
@@ -607,10 +602,6 @@
                             <div class="font-bold text-gray-700 text-[11px]">استجابات المتبرعين الواردة (${reqResponses.length}):</div>
                             ${reqResponses.length === 0 ? `<div class="text-gray-400 text-[10px]">لا توجد استجابات متبرعين حتى الآن.</div>` : 
                                 reqResponses.map(resp => {
-                                    // حساب مراحل التقدم: 
-                                    // المرحلة 1: قبول المتبرع (إذا كانت مقبولة)
-                                    // المرحلة 2: تأكيد المتبرع
-                                    // المرحلة 3: تأكيد طالب الدم
                                     const accepted = resp.status === 'مقبولة';
                                     const dConf = resp.donorConfirmed;
                                     const sConf = resp.seekerConfirmed;
@@ -633,47 +624,26 @@
                                             </div>
 
                                             ${accepted ? `
-                                                <!-- بطاقة متابعة التسليم والاستلام ومؤشر التقدم -->
                                                 <div class="bg-white p-3 rounded-xl border border-red-100 space-y-2.5">
                                                     <div class="font-black text-brand-700 text-[11px] flex items-center gap-1.5">
                                                         <i class="fas fa-exchange-alt"></i> بطاقة متابعة التسليم والاستلام الآمن
                                                     </div>
-
-                                                    <!-- مؤشر التقدم بثلاث مراحل -->
                                                     <div class="grid grid-cols-3 gap-1.5 text-center text-[9px] font-bold">
-                                                        <div class="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                                            1. قبول المتبرع ✓
-                                                        </div>
-                                                        <div class="p-1.5 rounded-lg ${dConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">
-                                                            2. تأكيد المتبرع ${dConf ? '✓' : '...'}
-                                                        </div>
-                                                        <div class="p-1.5 rounded-lg ${sConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">
-                                                            3. تأكيد طالب الدم ${sConf ? '✓' : '...'}
-                                                        </div>
+                                                        <div class="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">1. قبول المتبرع ✓</div>
+                                                        <div class="p-1.5 rounded-lg ${dConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">2. تأكيد المتبرع ${dConf ? '✓' : '...'}</div>
+                                                        <div class="p-1.5 rounded-lg ${sConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">3. تأكيد طالب الدم ${sConf ? '✓' : '...'}</div>
                                                     </div>
-
-                                                    <!-- أزرار التأكيد لطالب الدم -->
                                                     <div class="pt-1">
                                                         ${isCompleted ? `
-                                                            <div class="w-full bg-emerald-600 text-white text-center py-2 rounded-xl text-[11px] font-bold shadow">
-                                                                <i class="fas fa-check-circle"></i> تم إنجاز التبرع والتسليم واكتمال الحالة بنجاح!
-                                                            </div>
+                                                            <div class="w-full bg-emerald-600 text-white text-center py-2 rounded-xl text-[11px] font-bold shadow"><i class="fas fa-check-circle"></i> تم إنجاز التبرع والتسليم واكتمال الحالة بنجاح!</div>
                                                         ` : sConf ? `
-                                                            <div class="text-amber-700 bg-amber-50 p-2 rounded-xl text-center font-bold text-[10px]">
-                                                                <i class="fas fa-clock"></i> بانتظار تأكيد الطرف الآخر (المتبرع)...
-                                                            </div>
+                                                            <div class="text-amber-700 bg-amber-50 p-2 rounded-xl text-center font-bold text-[10px]"><i class="fas fa-clock"></i> بانتظار تأكيد الطرف الآخر (المتبرع)...</div>
                                                         ` : `
-                                                            <button onclick="confirmDelivery('${resp.id}', '${r.id}', 'seeker', '${resp.donorUid}')" class="w-full bg-emerald-600 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-emerald-700 transition">
-                                                                <i class="fas fa-check"></i> تأكيد الاستلام (تم استلام الدم)
-                                                            </button>
+                                                            <button onclick="confirmDelivery('${resp.id}', '${r.id}', 'seeker', '${resp.donorUid}')" class="w-full bg-emerald-600 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-emerald-700 transition"><i class="fas fa-check"></i> تأكيد الاستلام (تم استلام الدم)</button>
                                                         `}
                                                     </div>
-
-                                                    <!-- زر الإبلاغ عن مشكلة -->
                                                     <div class="text-center pt-1">
-                                                        <button onclick="reportIssue('${r.id}', '${resp.donorName}')" class="text-[10px] text-red-600 font-bold hover:underline">
-                                                            <i class="fas fa-exclamation-triangle"></i> إبلاغ الإدارة عن مشكلة أو اختلاف
-                                                        </button>
+                                                        <button onclick="reportIssue('${r.id}', '${resp.donorName}')" class="text-[10px] text-red-600 font-bold hover:underline"><i class="fas fa-exclamation-triangle"></i> إبلاغ الإدارة عن مشكلة أو اختلاف</button>
                                                     </div>
                                                 </div>
                                             ` : ''}
@@ -686,7 +656,6 @@
             }).join('');
         }
 
-        // قبول المتبرع وتغيير حالة الطلب إلى "قيد التنسيق" (يختفي من الواجهة النشطة للعامة)
         window.acceptDonor = async function(responseId, requestId, donorUid) {
             try {
                 await updateDoc(doc(db, 'bloodResponses', responseId), { status: 'مقبولة' });
@@ -714,7 +683,7 @@
                     await addDoc(collection(db, 'userInbox'), {
                         targetUid: donorUid,
                         title: `📋 تحديث حالة استجابتك`,
-                        text: `تمت اعتذار أو رفض استجابتك لطلب الدم.`,
+                        text: `تم اعتذار أو رفض استجابتك لطلب الدم.`,
                         time: 'الآن',
                         read: false,
                         createdAt: new Date().toISOString()
@@ -726,7 +695,6 @@
             }
         }
 
-        // تأكيد التسليم أو الاستلام (من قبل المتبرع أو طالب الدم)
         window.confirmDelivery = async function(responseId, requestId, role, otherUid) {
             if(!currentUid) return;
             const now = new Date().toISOString();
@@ -741,23 +709,20 @@
             }
 
             try {
-                // جلب بيانات الاستجابة الحالية للتحقق مما إذا كان الطرف الآخر قد أكد أيضاً
                 const currentResp = allResponses.find(r => r.id === responseId);
                 if(!currentResp) return;
 
                 const otherConfirmed = role === 'donor' ? currentResp.seekerConfirmed : currentResp.donorConfirmed;
 
                 if(otherConfirmed) {
-                    // إذا أكد الطرفان، تتحول الحالة تلقائياً إلى "مكتمل" وينتقل الطلب إلى الأرشيف
                     updateData.status = 'مكتمل';
                     await updateDoc(doc(db, 'bloodResponses', responseId), updateData);
                     await updateDoc(doc(db, 'bloodRequests', requestId), { status: 'مكتمل' });
 
-                    // إشعار الطرفين باكتمال العملية
                     await addDoc(collection(db, 'userInbox'), {
                         targetUid: otherUid,
                         title: `🏆 اكتمال عملية التبرع بنجاح!`,
-                        text: `تم تأكيد التسليم والاستلام من الطرفين وتحويل الحالة إلى مكتمل وأرشفتها. شکراً لإنقاذك الحياة!`,
+                        text: `تم تأكيد التسليم والاستلام من الطرفين وتحويل الحالة إلى مكتمل وأرشفتها. شكراً لإنقاذك الحياة!`,
                         time: 'الآن',
                         read: false,
                         createdAt: new Date().toISOString()
@@ -765,7 +730,6 @@
 
                     showCustomModal('مبروك! اكتملت عملية التبرع بنجاح', 'تم تأكيد الطرفين وتم أرشفة الطلب وتحويله إلى مكتمل.', 'fa-heart');
                 } else {
-                    // إذا أكد طرف واحد فقط
                     await updateDoc(doc(db, 'bloodResponses', responseId), updateData);
 
                     await addDoc(collection(db, 'userInbox'), {
@@ -784,7 +748,6 @@
             }
         }
 
-        // الإبلاغ عن مشكلة للإدارة
         window.reportIssue = function(requestId, otherName) {
             const issueDetails = prompt(`يرجى كتابة تفاصيل المشكلة أو الاختلاف مع (${otherName}) ليتم مراجعتها من قبل الإدارة:`, "يوجد اختلاف في موعد أو تفاصيل التبرع...");
             if(!issueDetails) return;
@@ -801,7 +764,6 @@
             showCustomModal('تم إرسال البلاغ بنجاح', 'تم رفع تقرير الاختلاف لفريق إدارة بنك الدم للمتابعة الفورية.', 'fa-shield-alt');
         }
 
-        // صفحة المتبرع الخاصة (سجل التبرعات والتسليم والاستلام)
         window.renderMyDonations = function() {
             const container = document.getElementById('myDonationsContainer');
             if(!container || !currentUid) return;
@@ -829,45 +791,26 @@
                         </div>
 
                         ${accepted ? `
-                            <!-- بطاقة التسليم والاستلام للمتبرع -->
                             <div class="bg-white p-3 rounded-xl border border-red-100 space-y-2.5 text-xs">
                                 <div class="font-black text-brand-700 text-[11px] flex items-center gap-1.5">
                                     <i class="fas fa-hand-holding-medical"></i> بطاقة التسليم والاستلام (خاصة بالمتبرع)
                                 </div>
-
-                                <!-- مؤشر التقدم بثلاث مراحل للمتبرع -->
                                 <div class="grid grid-cols-3 gap-1.5 text-center text-[9px] font-bold">
-                                    <div class="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                        1. قبول الطلب ✓
-                                    </div>
-                                    <div class="p-1.5 rounded-lg ${dConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">
-                                        2. تأكيد المتبرع ${dConf ? '✓' : '...'}
-                                    </div>
-                                    <div class="p-1.5 rounded-lg ${sConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">
-                                        3. تأكيد طالب الدم ${sConf ? '✓' : '...'}
-                                    </div>
+                                    <div class="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">1. قبول الطلب ✓</div>
+                                    <div class="p-1.5 rounded-lg ${dConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">2. تأكيد المتبرع ${dConf ? '✓' : '...'}</div>
+                                    <div class="p-1.5 rounded-lg ${sConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">3. تأكيد طالب الدم ${sConf ? '✓' : '...'}</div>
                                 </div>
-
                                 <div class="pt-1">
                                     ${isCompleted ? `
-                                        <div class="w-full bg-emerald-600 text-white text-center py-2 rounded-xl text-[11px] font-bold shadow">
-                                            <i class="fas fa-check-circle"></i> تم إنجاز التبرع والتسليم واكتمال الحالة بنجاح!
-                                        </div>
+                                        <div class="w-full bg-emerald-600 text-white text-center py-2 rounded-xl text-[11px] font-bold shadow"><i class="fas fa-check-circle"></i> تم إنجاز التبرع والتسليم واكتمال الحالة بنجاح!</div>
                                     ` : dConf ? `
-                                        <div class="text-amber-700 bg-amber-50 p-2 rounded-xl text-center font-bold text-[10px]">
-                                            <i class="fas fa-clock"></i> بانتظار تأكيد الطرف الآخر (طالب الدم)...
-                                        </div>
+                                        <div class="text-amber-700 bg-amber-50 p-2 rounded-xl text-center font-bold text-[10px]"><i class="fas fa-clock"></i> بانتظار تأكيد الطرف الآخر (طالب الدم)...</div>
                                     ` : `
-                                        <button onclick="confirmDelivery('${d.id}', '${d.requestId}', 'donor', '${d.seekerUid}')" class="w-full bg-brand-500 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-brand-700 transition">
-                                            <i class="fas fa-check"></i> تم التبرع والتسليم (تأكيد المتبرع)
-                                        </button>
+                                        <button onclick="confirmDelivery('${d.id}', '${d.requestId}', 'donor', '${d.seekerUid}')" class="w-full bg-brand-500 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-check"></i> تم التبرع والتسليم (تأكيد المتبرع)</button>
                                     `}
                                 </div>
-
                                 <div class="text-center pt-1">
-                                    <button onclick="reportIssue('${d.requestId}', 'طالب الدم')" class="text-[10px] text-red-600 font-bold hover:underline">
-                                        <i class="fas fa-exclamation-triangle"></i> إبلاغ الإدارة عن مشكلة أو اختلاف
-                                    </button>
+                                    <button onclick="reportIssue('${d.requestId}', 'طالب الدم')" class="text-[10px] text-red-600 font-bold hover:underline"><i class="fas fa-exclamation-triangle"></i> إبلاغ الإدارة عن مشكلة أو اختلاف</button>
                                 </div>
                             </div>
                         ` : ''}
