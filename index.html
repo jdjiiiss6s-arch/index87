@@ -94,7 +94,7 @@
             <div class="bg-gradient-to-r from-brand-700 to-brand-500 rounded-3xl p-6 text-white space-y-3 shadow-md">
                 <div class="text-xs bg-white/20 px-3 py-1 rounded-full inline-block font-bold">منصة محافظة ميسان الطبية الطارئة</div>
                 <h1 class="text-2xl font-black">قطرة منك.. حياة لغيرك</h1>
-                <p class="text-xs text-white/90">حالات طارئة مباشرة من مستشفيات ميسان. الطلبات النشطة تظهر للعامة، وعند التنسيق وقبول المتبرع تبدأ متابعة التسليم والاستلام.</p>
+                <p class="text-xs text-white/90">حالات طارئة مباشرة من مستشفيات ميسان. الطلبات النشطة تظهر للعامة، وعند قبول المتبرع تبدأ متابعة التسليم والاستلام الآمن.</p>
                 <div class="flex gap-2 pt-2">
                     <button onclick="switchView('request-blood')" class="bg-white text-brand-700 px-4 py-2.5 rounded-xl font-bold text-xs shadow hover:bg-gray-100 transition">أحتاج إلى متبرع عاجل</button>
                     <button onclick="switchView('donor-register')" class="bg-black/20 border border-white/30 text-white px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-black/35 transition">أريد التبرع بالدم</button>
@@ -120,7 +120,7 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <h2 class="font-black text-gray-800 text-sm">طلبات الدم النشطة والطارئة في ميسان</h2>
-                    <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full font-bold"><i class="fas fa-circle text-[8px] animate-pulse"></i> متزامن عبر السحابة</span>
+                    <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full font-bold"><i class="fas fa-circle text-[8px] animate-pulse"></i> نشر فوري مباشر</span>
                 </div>
                 <div id="homeRequestsList" class="grid sm:grid-cols-2 gap-3">
                     <div class="col-span-2 text-center py-6 text-gray-400 text-xs bg-white rounded-2xl border border-gray-100">جاري تحميل الطلبات من السحابة...</div>
@@ -131,7 +131,7 @@
         <!-- REQUEST BLOOD VIEW -->
         <section id="view-request-blood" class="view-section hidden max-w-lg mx-auto">
             <div class="glass-card p-5 rounded-3xl space-y-4">
-                <h2 class="font-black text-brand-700 text-base border-b pb-2">طلب دم طارئ جديد</h2>
+                <h2 class="font-black text-brand-700 text-base border-b pb-2">طلب دم طارئ (يظهر فوراً بدون انتظار)</h2>
                 <form id="reqForm" onsubmit="handleRequestSubmit(event)" class="space-y-3 text-xs font-bold">
                     <div>
                         <label class="text-gray-600 block mb-1">اسم المريض الكامل</label>
@@ -139,7 +139,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-gray-600 block mb-1">رقم الهاتف (للتنسيق الآمن)</label>
+                            <label class="text-gray-600 block mb-1">رقم الهاتف (للتنسيق)</label>
                             <input type="tel" id="rPhone" required placeholder="0770..." class="w-full p-2.5 rounded-xl border border-gray-200 font-normal">
                         </div>
                         <div>
@@ -238,28 +238,28 @@
             </div>
         </section>
 
-        <!-- MY REQUESTS VIEW -->
+        <!-- MY REQUESTS VIEW (طالب الدم) -->
         <section id="view-my-requests" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-4">
                 <div class="border-b pb-2 flex justify-between items-center">
                     <h2 class="font-black text-brand-700 text-base">طلباتي والاستجابات الواردة (إدارة المريض)</h2>
-                    <span class="text-[10px] text-gray-400">قبول المتبرع ومتابعة التسليم</span>
+                    <span class="text-[10px] text-gray-400">قبول المتبرع ومتابعة التسليم والاستلام</span>
                 </div>
                 <div id="myRequestsContainer" class="space-y-4 text-xs">
-                    <div class="text-center py-6 text-gray-400">جاري تحميل طلباتك السحابية...</div>
+                    <div class="text-center py-6 text-gray-400">جاري تحميل طلباتك...</div>
                 </div>
             </div>
         </section>
 
-        <!-- MY DONATIONS VIEW -->
+        <!-- MY DONATIONS VIEW (المتبرع) -->
         <section id="view-my-donations" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-4">
                 <div class="border-b pb-2 flex justify-between items-center">
                     <h2 class="font-black text-brand-700 text-base">سجل التبرعات ومتابعة التسليم والاستلام</h2>
-                    <span class="text-[10px] text-gray-400">متابعة حالة التبرع وتأكيد التسليم</span>
+                    <span class="text-[10px] text-gray-400">تأكيد التبرع والتسليم</span>
                 </div>
                 <div id="myDonationsContainer" class="space-y-4 text-xs">
-                    <div class="text-center py-6 text-gray-400">جاري تحميل سجل استجاباتك...</div>
+                    <div class="text-center py-6 text-gray-400">جاري تحميل استجاباتك...</div>
                 </div>
             </div>
         </section>
@@ -268,7 +268,7 @@
         <section id="view-admin-dashboard" class="view-section hidden space-y-4">
             <div class="glass-card p-5 rounded-3xl space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="font-black text-brand-700 text-base">لوحة إشراف بنك الدم (محمية بكلمة سر)</h2>
+                    <h2 class="font-black text-brand-700 text-base">لوحة إشراف بنك الدم (ميسان)</h2>
                     <span class="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-bold"><i class="fas fa-shield-alt"></i> إدارة الطوارئ</span>
                 </div>
                 <div id="adminList" class="space-y-2 text-xs">
@@ -281,13 +281,13 @@
         <section id="view-inbox" class="view-section hidden max-w-lg mx-auto">
             <div class="glass-card p-5 rounded-3xl space-y-4">
                 <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="font-black text-gray-800 text-sm">البريد الوارد والتنبيهات الفورية</h2>
+                    <h2 class="font-black text-gray-800 text-sm">البريد الوارد والتنبيهات الخاصة</h2>
                     <button onclick="clearInbox()" class="text-[10px] text-brand-500 font-bold hover:underline">مسح الكل</button>
                 </div>
                 <div id="inboxList" class="space-y-3 text-xs">
                     <div class="p-3 bg-red-50 rounded-2xl text-brand-700 font-medium border border-red-100">
                         <div class="font-black mb-1"><i class="fas fa-info-circle"></i> ترحيب بمنصة نبض العراق</div>
-                        أهلاً بك. ستصلك هنا الإشعارات الفورية عند استجابة المتبرعين وقبول الطلبات ونظام التسليم والاستلام الآمن.
+                        أهلاً بك. ستصلك هنا الإشعارات الفورية عند استجابة المتبرعين وقبول الطلبات ونظام التسليم والاستلام.
                     </div>
                 </div>
             </div>
@@ -310,7 +310,6 @@
     <!-- Firebase SDKs & Enhanced App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -324,25 +323,24 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
         const adminPin = "Maysan@9988#Blood2026";
 
-        let currentUid = null;
+        // معرف فريد للجهاز لربط الطلبات والاستجابات بسلاسة
+        let myDeviceUUID = localStorage.getItem('nabad_device_uuid');
+        if(!myDeviceUUID) {
+            myDeviceUUID = 'dev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('nabad_device_uuid', myDeviceUUID);
+        }
+
         let allRequests = [];
         let allDonors = [];
         let allResponses = [];
         let myInbox = [];
 
-        signInAnonymously(auth).then((userCred) => {
-            currentUid = userCred.user.uid;
-            console.log("Firebase Auth Connected. UID:", currentUid);
-            initRealtimeListeners();
-        }).catch(err => {
-            console.warn("Auth fallback active.", err);
-            initRealtimeListeners();
-        });
+        // تشغيل المستمعين فوراً بدون الانتظار لأي مصادقة معقدة
+        initRealtimeListeners();
 
         function initRealtimeListeners() {
             onSnapshot(collection(db, 'bloodRequests'), (snapshot) => {
@@ -354,7 +352,7 @@
                 renderMyRequests();
                 renderAdminRequests();
                 updateStats();
-            }, (error) => console.error("Request listener error:", error));
+            }, (error) => console.error("Request error:", error));
 
             onSnapshot(collection(db, 'donorsList'), (snapshot) => {
                 allDonors = [];
@@ -363,7 +361,7 @@
                 });
                 renderDonors(allDonors);
                 updateStats();
-            }, (error) => console.error("Donor listener error:", error));
+            }, (error) => console.error("Donor error:", error));
 
             onSnapshot(collection(db, 'bloodResponses'), (snapshot) => {
                 allResponses = [];
@@ -372,19 +370,19 @@
                 });
                 renderMyRequests();
                 renderMyDonations();
-            }, (error) => console.error("Response listener error:", error));
+            }, (error) => console.error("Response error:", error));
 
             onSnapshot(collection(db, 'userInbox'), (snapshot) => {
                 const loaded = [];
                 snapshot.forEach(docSnap => {
                     const data = docSnap.data();
-                    if(data.targetUid === currentUid) {
+                    if(data.targetUUID === myDeviceUUID) {
                         loaded.push({ id: docSnap.id, ...data });
                     }
                 });
                 myInbox = loaded;
                 updateInboxUI();
-            }, (error) => console.error("Inbox listener error:", error));
+            }, (error) => console.error("Inbox error:", error));
         }
 
         function updateStats() {
@@ -442,25 +440,21 @@
                         ${r.notes ? `<div class="text-[11px] text-gray-600 bg-gray-50 p-2 rounded-xl mt-1.5"><i class="fas fa-notes-medical text-brand-500"></i> ${r.notes}</div>` : ''}
                     </div>
                     <div class="pt-1 border-t border-gray-100">
-                        <button onclick="respondToRequest('${r.id}', '${r.name}', '${r.creatorUid}')" class="w-full bg-brand-500 text-white text-center py-2.5 rounded-xl text-xs font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-hand-holding-medical"></i> أنا متبرع مستجيب لهذه الحالة</button>
+                        <button onclick="respondToRequest('${r.id}', '${r.name}', '${r.deviceUUID}')" class="w-full bg-brand-500 text-white text-center py-2.5 rounded-xl text-xs font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-hand-holding-medical"></i> أنا متبرع مستجيب لهذه الحالة</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // نشر طلب دم جديد مع معالجة الأخطاء
+        // نشر طلب الدم الفوري المباشر
         window.handleRequestSubmit = async function(e) {
             e.preventDefault();
-            if(!currentUid) {
-                showCustomModal('انتظر قليلاً', 'جاري الاتصال بالسحابة، حاول بعد ثانية.', 'fa-spinner');
-                return;
-            }
             const btn = document.getElementById('reqSubmitBtn');
             btn.disabled = true;
             btn.innerText = `جاري النشر الفوري...`;
 
             const newReq = {
-                creatorUid: currentUid,
+                deviceUUID: myDeviceUUID,
                 name: document.getElementById('rName').value,
                 phone: document.getElementById('rPhone').value,
                 blood: document.getElementById('rBlood').value,
@@ -472,7 +466,7 @@
 
             try {
                 await addDoc(collection(db, 'bloodRequests'), newReq);
-                showCustomModal('تم النشر بنجاح!', 'تم إرسال طلبك ونشره بحالة نشطة فوراً.', 'fa-check-circle');
+                showCustomModal('تم النشر بنجاح!', 'تم نشر طلب الدم بحالة "نشط" وسيظهر فوراً للمتبرعين.', 'fa-check-circle');
                 document.getElementById('reqForm').reset();
                 window.switchView('my-requests');
             } catch(ex) {
@@ -485,13 +479,12 @@
 
         window.handleDonorSubmit = async function(e) {
             e.preventDefault();
-            if(!currentUid) return;
             const btn = document.getElementById('donorSubmitBtn');
             btn.disabled = true;
             btn.innerText = `جاري الحفظ الفوري...`;
 
             const newDonor = {
-                creatorUid: currentUid,
+                deviceUUID: myDeviceUUID,
                 name: document.getElementById('dName').value,
                 phone: document.getElementById('dPhone').value,
                 blood: document.getElementById('dBlood').value,
@@ -535,8 +528,8 @@
             renderDonors(filtered);
         }
 
-        window.respondToRequest = async function(reqId, reqName, creatorUid) {
-            if(!currentUid) return;
+        // استجابة متبرع للطلب
+        window.respondToRequest = async function(reqId, reqName, creatorUUID) {
             const donorName = prompt("أدخل اسمك الكريم كمتبرع لهذه الحالة:", "متبرع متطوع");
             if(!donorName) return;
             const donorPhone = prompt("أدخل رقم هاتفك ليتواصل معك طالب الدم للتنسيق:", "0770...");
@@ -545,26 +538,24 @@
             const responseData = {
                 requestId: reqId,
                 requestName: reqName,
-                seekerUid: creatorUid || '',
-                donorUid: currentUid,
+                seekerUUID: creatorUUID || '',
+                donorUUID: myDeviceUUID,
                 donorName: donorName,
                 donorPhone: donorPhone,
                 status: 'قيد الانتظار',
                 donorConfirmed: false,
-                donorConfirmedAt: null,
                 seekerConfirmed: false,
-                seekerConfirmedAt: null,
                 createdAt: new Date().toISOString()
             };
 
             try {
                 await addDoc(collection(db, 'bloodResponses'), responseData);
 
-                if(creatorUid) {
+                if(creatorUUID) {
                     await addDoc(collection(db, 'userInbox'), {
-                        targetUid: creatorUid,
+                        targetUUID: creatorUUID,
                         title: `🔔 استجابة جديدة لطلب: ${reqName}`,
-                        text: `استجاب المتبرع الكريم (${donorName}) لطلبك. بادر بمراجعة قسم "طلباتي" لقبول المتبرع.`,
+                        text: `استجاب المتبرع الكريم (${donorName}) لطلبك. بادر بمراجعة قسم "طلباتي" لقبول المتبرع ومتابعة التسليم.`,
                         time: 'الآن',
                         read: false,
                         createdAt: new Date().toISOString()
@@ -578,13 +569,14 @@
             }
         }
 
+        // صفحة طلب الدم ونظام التسليم والاستلام (طالب الدم)
         window.renderMyRequests = function() {
             const container = document.getElementById('myRequestsContainer');
-            if(!container || !currentUid) return;
+            if(!container) return;
 
-            const myReqs = allRequests.filter(r => r.creatorUid === currentUid);
+            const myReqs = allRequests.filter(r => r.deviceUUID === myDeviceUUID);
             if(myReqs.length === 0) {
-                container.innerHTML = `<div class="text-center py-6 text-gray-400">ليس لديك أي طلبات دم مسجلة من هذا الحساب حالياً.</div>`;
+                container.innerHTML = `<div class="text-center py-6 text-gray-400">ليس لديك أي طلبات دم مسجلة من هذا الجهاز حالياً.</div>`;
                 return;
             }
 
@@ -617,31 +609,36 @@
                                                 </div>
                                                 <div class="flex gap-1.5">
                                                     ${resp.status === 'قيد الانتظار' ? `
-                                                        <button onclick="acceptDonor('${resp.id}', '${r.id}', '${resp.donorUid}')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-bold shadow">قبول المتبرع</button>
-                                                        <button onclick="updateResponseStatus('${resp.id}', 'مرفوضة', '${resp.donorUid}')" class="bg-red-600 text-white px-3 py-1.5 rounded-xl font-bold shadow">رفض</button>
+                                                        <button onclick="acceptDonor('${resp.id}', '${r.id}', '${resp.donorUUID}')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-bold shadow">قبول المتبرع</button>
+                                                        <button onclick="updateResponseStatus('${resp.id}', 'مرفوضة', '${resp.donorUUID}')" class="bg-red-600 text-white px-3 py-1.5 rounded-xl font-bold shadow">رفض</button>
                                                     ` : `<span class="text-gray-500 font-bold bg-white px-2.5 py-1 rounded-lg border">${resp.status}</span>`}
                                                 </div>
                                             </div>
 
                                             ${accepted ? `
+                                                <!-- بطاقة متابعة التسليم والاستلام ومؤشر التقدم -->
                                                 <div class="bg-white p-3 rounded-xl border border-red-100 space-y-2.5">
                                                     <div class="font-black text-brand-700 text-[11px] flex items-center gap-1.5">
                                                         <i class="fas fa-exchange-alt"></i> بطاقة متابعة التسليم والاستلام الآمن
                                                     </div>
+
+                                                    <!-- مؤشر التقدم بثلاث مراحل -->
                                                     <div class="grid grid-cols-3 gap-1.5 text-center text-[9px] font-bold">
                                                         <div class="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">1. قبول المتبرع ✓</div>
                                                         <div class="p-1.5 rounded-lg ${dConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">2. تأكيد المتبرع ${dConf ? '✓' : '...'}</div>
                                                         <div class="p-1.5 rounded-lg ${sConf ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-500'}">3. تأكيد طالب الدم ${sConf ? '✓' : '...'}</div>
                                                     </div>
+
                                                     <div class="pt-1">
                                                         ${isCompleted ? `
                                                             <div class="w-full bg-emerald-600 text-white text-center py-2 rounded-xl text-[11px] font-bold shadow"><i class="fas fa-check-circle"></i> تم إنجاز التبرع والتسليم واكتمال الحالة بنجاح!</div>
                                                         ` : sConf ? `
                                                             <div class="text-amber-700 bg-amber-50 p-2 rounded-xl text-center font-bold text-[10px]"><i class="fas fa-clock"></i> بانتظار تأكيد الطرف الآخر (المتبرع)...</div>
                                                         ` : `
-                                                            <button onclick="confirmDelivery('${resp.id}', '${r.id}', 'seeker', '${resp.donorUid}')" class="w-full bg-emerald-600 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-emerald-700 transition"><i class="fas fa-check"></i> تأكيد الاستلام (تم استلام الدم)</button>
+                                                            <button onclick="confirmDelivery('${resp.id}', '${r.id}', 'seeker', '${resp.donorUUID}')" class="w-full bg-emerald-600 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-emerald-700 transition"><i class="fas fa-check"></i> تأكيد الاستلام (تم استلام الدم)</button>
                                                         `}
                                                     </div>
+
                                                     <div class="text-center pt-1">
                                                         <button onclick="reportIssue('${r.id}', '${resp.donorName}')" class="text-[10px] text-red-600 font-bold hover:underline"><i class="fas fa-exclamation-triangle"></i> إبلاغ الإدارة عن مشكلة أو اختلاف</button>
                                                     </div>
@@ -656,19 +653,21 @@
             }).join('');
         }
 
-        window.acceptDonor = async function(responseId, requestId, donorUid) {
+        window.acceptDonor = async function(responseId, requestId, donorUUID) {
             try {
                 await updateDoc(doc(db, 'bloodResponses', responseId), { status: 'مقبولة' });
                 await updateDoc(doc(db, 'bloodRequests', requestId), { status: 'قيد التنسيق' });
 
-                await addDoc(collection(db, 'userInbox'), {
-                    targetUid: donorUid,
-                    title: `🎉 تم قبول استجابتك!`,
-                    text: `تم قبول تبرعك بنجاح! انتقل إلى قسم "سجل التبرعات والتسليم" لمتابعة التنسيق وتأكيد التبرع والتسليم عند إتمامه.`,
-                    time: 'الآن',
-                    read: false,
-                    createdAt: new Date().toISOString()
-                });
+                if(donorUUID) {
+                    await addDoc(collection(db, 'userInbox'), {
+                        targetUUID: donorUUID,
+                        title: `🎉 تم قبول استجابتك!`,
+                        text: `تم قبول تبرعك بنجاح! انتقل إلى قسم "سجل التبرعات والتسليم" لمتابعة التنسيق وتأكيد التبرع والتسليم عند إتمامه.`,
+                        time: 'الآن',
+                        read: false,
+                        createdAt: new Date().toISOString()
+                    });
+                }
 
                 showCustomModal('تم قبول المتبرع بنجاح', 'تم تحويل الطلب إلى قيد التنسيق وأصبح بإمكان الطرفين استخدام بطاقة التسليم والاستلام.', 'fa-check-circle');
             } catch(ex) {
@@ -676,12 +675,12 @@
             }
         }
 
-        window.updateResponseStatus = async function(responseId, newStatus, donorUid) {
+        window.updateResponseStatus = async function(responseId, newStatus, donorUUID) {
             try {
                 await updateDoc(doc(db, 'bloodResponses', responseId), { status: newStatus });
-                if(donorUid) {
+                if(donorUUID) {
                     await addDoc(collection(db, 'userInbox'), {
-                        targetUid: donorUid,
+                        targetUUID: donorUUID,
                         title: `📋 تحديث حالة استجابتك`,
                         text: `تم اعتذار أو رفض استجابتك لطلب الدم.`,
                         time: 'الآن',
@@ -695,17 +694,15 @@
             }
         }
 
-        window.confirmDelivery = async function(responseId, requestId, role, otherUid) {
-            if(!currentUid) return;
+        // نظام التأكيد المزدوج للتسليم والاستلام
+        window.confirmDelivery = async function(responseId, requestId, role, otherUUID) {
             const now = new Date().toISOString();
             const updateData = {};
 
             if(role === 'donor') {
                 updateData.donorConfirmed = true;
-                updateData.donorConfirmedAt = now;
             } else {
                 updateData.seekerConfirmed = true;
-                updateData.seekerConfirmedAt = now;
             }
 
             try {
@@ -719,27 +716,31 @@
                     await updateDoc(doc(db, 'bloodResponses', responseId), updateData);
                     await updateDoc(doc(db, 'bloodRequests', requestId), { status: 'مكتمل' });
 
-                    await addDoc(collection(db, 'userInbox'), {
-                        targetUid: otherUid,
-                        title: `🏆 اكتمال عملية التبرع بنجاح!`,
-                        text: `تم تأكيد التسليم والاستلام من الطرفين وتحويل الحالة إلى مكتمل وأرشفتها. شكراً لإنقاذك الحياة!`,
-                        time: 'الآن',
-                        read: false,
-                        createdAt: new Date().toISOString()
-                    });
+                    if(otherUUID) {
+                        await addDoc(collection(db, 'userInbox'), {
+                            targetUUID: otherUUID,
+                            title: `🏆 اكتمال عملية التبرع بنجاح!`,
+                            text: `تم تأكيد التسليم والاستلام من الطرفين وتحويل الحالة إلى مكتمل وأرشفتها. شكراً لإنقاذك الحياة!`,
+                            time: 'الآن',
+                            read: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
 
                     showCustomModal('مبروك! اكتملت عملية التبرع بنجاح', 'تم تأكيد الطرفين وتم أرشفة الطلب وتحويله إلى مكتمل.', 'fa-heart');
                 } else {
                     await updateDoc(doc(db, 'bloodResponses', responseId), updateData);
 
-                    await addDoc(collection(db, 'userInbox'), {
-                        targetUid: otherUid,
-                        title: `🔔 تأكيد جديد من الطرف الآخر`,
-                        text: `قام الطرف الآخر بتأكيد ${role === 'donor' ? 'التبرع والتسليم' : 'الاستلام'}. بانتظار تأكيدك النهائي.`,
-                        time: 'الآن',
-                        read: false,
-                        createdAt: new Date().toISOString()
-                    });
+                    if(otherUUID) {
+                        await addDoc(collection(db, 'userInbox'), {
+                            targetUUID: otherUUID,
+                            title: `🔔 تأكيد جديد من الطرف الآخر`,
+                            text: `قام الطرف الآخر بتأكيد ${role === 'donor' ? 'التبرع والتسليم' : 'الاستلام'}. بانتظار تأكيدك النهائي.`,
+                            time: 'الآن',
+                            read: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
 
                     showCustomModal('تم تسجيل تأكيدك بنجاح', 'بانتظار تأكيد الطرف الآخر لإتمام واكتمال العملية نهائياً.', 'fa-check-circle');
                 }
@@ -753,7 +754,7 @@
             if(!issueDetails) return;
 
             addDoc(collection(db, 'userInbox'), {
-                targetUid: currentUid,
+                targetUUID: myDeviceUUID,
                 title: `⚠️ تم إرسال بلاغك للإدارة`,
                 text: `تم استلام بلاغك بخصوص الطلب وسيتم مراجعته وحله قريباً. تفاصيل البلاغ: ${issueDetails}`,
                 time: 'الآن',
@@ -764,13 +765,14 @@
             showCustomModal('تم إرسال البلاغ بنجاح', 'تم رفع تقرير الاختلاف لفريق إدارة بنك الدم للمتابعة الفورية.', 'fa-shield-alt');
         }
 
+        // صفحة سجل التبرعات والتسليم (المتبرع)
         window.renderMyDonations = function() {
             const container = document.getElementById('myDonationsContainer');
-            if(!container || !currentUid) return;
+            if(!container) return;
 
-            const myDons = allResponses.filter(resp => resp.donorUid === currentUid);
+            const myDons = allResponses.filter(resp => resp.donorUUID === myDeviceUUID);
             if(myDons.length === 0) {
-                container.innerHTML = `<div class="text-center py-6 text-gray-400">لم تقم بأي استجابة لطلبات الدم من هذا الحساب حتى الآن.</div>`;
+                container.innerHTML = `<div class="text-center py-6 text-gray-400">لم تقم بأي استجابة لطلبات الدم من هذا الجهاز حتى الآن.</div>`;
                 return;
             }
 
@@ -806,7 +808,7 @@
                                     ` : dConf ? `
                                         <div class="text-amber-700 bg-amber-50 p-2 rounded-xl text-center font-bold text-[10px]"><i class="fas fa-clock"></i> بانتظار تأكيد الطرف الآخر (طالب الدم)...</div>
                                     ` : `
-                                        <button onclick="confirmDelivery('${d.id}', '${d.requestId}', 'donor', '${d.seekerUid}')" class="w-full bg-brand-500 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-check"></i> تم التبرع والتسليم (تأكيد المتبرع)</button>
+                                        <button onclick="confirmDelivery('${d.id}', '${d.requestId}', 'donor', '${d.seekerUUID}')" class="w-full bg-brand-500 text-white py-2 rounded-xl text-[11px] font-bold shadow hover:bg-brand-700 transition"><i class="fas fa-check"></i> تم التبرع والتسليم (تأكيد المتبرع)</button>
                                     `}
                                 </div>
                                 <div class="text-center pt-1">
