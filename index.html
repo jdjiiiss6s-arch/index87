@@ -316,7 +316,7 @@
         });
 
         function initRealtimeListeners() {
-            // Listen to Requests (Instant Live)
+            // Listen to Requests (Instant Live via onSnapshot)
             const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests');
             onSnapshot(reqRef, (snapshot) => {
                 allRequests = [];
@@ -328,7 +328,7 @@
                 updateStats();
             }, (err) => console.error("Firestore Request Error:", err));
 
-            // Listen to Donors
+            // Listen to Donors (Instant Live via onSnapshot)
             const donorRef = collection(db, 'artifacts', appId, 'public', 'data', 'donorsList');
             onSnapshot(donorRef, (snapshot) => {
                 allDonors = [];
@@ -390,86 +390,61 @@
             `).join('');
         }
 
-        // Animated Countdown & Submission for Blood Request
+        // Fast Instant Submission for Blood Request with live cloud sync
         window.handleRequestSubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('reqSubmitBtn');
             btn.disabled = true;
+            btn.innerText = `جاري النشر الفوري...`;
 
-            // 3-second animated countdown
-            let count = 3;
-            btn.innerText = `جاري إرسال الطلب الطارئ... ${count}`;
-            
-            const timer = setInterval(async () => {
-                count--;
-                if(count > 0) {
-                    btn.innerText = `جاري إرسال الطلب الطارئ... ${count}`;
-                } else {
-                    clearInterval(timer);
-                    btn.innerText = `جاري الحفظ في السحابة...`;
-                    
-                    const newReq = {
-                        name: document.getElementById('rName').value,
-                        phone: document.getElementById('rPhone').value,
-                        blood: document.getElementById('rBlood').value,
-                        hosp: document.getElementById('rHosp').value,
-                        notes: document.getElementById('rNotes').value || '',
-                        createdAt: new Date().toISOString()
-                    };
+            const newReq = {
+                name: document.getElementById('rName').value,
+                phone: document.getElementById('rPhone').value,
+                blood: document.getElementById('rBlood').value,
+                hosp: document.getElementById('rHosp').value,
+                notes: document.getElementById('rNotes').value || '',
+                createdAt: new Date().toISOString()
+            };
 
-                    try {
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests'), newReq);
-                        showCustomModal('تم إرسال طلبك بنجاح!', 'تم نشر طلبك الطارئ فوراً في الواجهة الرئيسية لمستشفيات ميسان بدون انتظار موافقة الإدارة لسرعة إنقاذ الحياة.', 'fa-check-circle');
-                        document.getElementById('reqForm').reset();
-                        window.switchView('home');
-                    } catch(ex) {
-                        showCustomModal('خطأ في الإرسال', ex.message, 'fa-exclamation-triangle');
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerText = 'إرسال الطلب فوراً';
-                    }
-                }
-            }, 1000);
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests'), newReq);
+                showCustomModal('تم النشر بنجاح!', 'تم إرسال طلبك ونشره فوراً في الواجهة الرئيسية لجميع المتبرعين في ميسان.', 'fa-check-circle');
+                document.getElementById('reqForm').reset();
+                window.switchView('home');
+            } catch(ex) {
+                showCustomModal('خطأ في النشر', ex.message, 'fa-exclamation-triangle');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'إرسال الطلب فوراً';
+            }
         }
 
-        // Animated Countdown & Submission for Donor
+        // Fast Instant Submission for Donor Registration
         window.handleDonorSubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('donorSubmitBtn');
             btn.disabled = true;
+            btn.innerText = `جاري الحفظ الفوري...`;
 
-            let count = 3;
-            btn.innerText = `جاري تسجيل متبرع جديد... ${count}`;
+            const newDonor = {
+                name: document.getElementById('dName').value,
+                phone: document.getElementById('dPhone').value,
+                blood: document.getElementById('dBlood').value,
+                area: document.getElementById('dArea').value,
+                createdAt: new Date().toISOString()
+            };
 
-            const timer = setInterval(async () => {
-                count--;
-                if(count > 0) {
-                    btn.innerText = `جاري تسجيل متبرع جديد... ${count}`;
-                } else {
-                    clearInterval(timer);
-                    btn.innerText = `جاري الحفظ...`;
-
-                    const newDonor = {
-                        name: document.getElementById('dName').value,
-                        phone: document.getElementById('dPhone').value,
-                        blood: document.getElementById('dBlood').value,
-                        area: document.getElementById('dArea').value,
-                        createdAt: new Date().toISOString()
-                    };
-
-                    try {
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'donorsList'), newDonor);
-                        showCustomModal('شكراً لانضمامك لنبض العراق!', 'تم حفظ بياناتك كمتبرع معتمد في ميسان بنجاح.', 'fa-heart');
-                        document.getElementById('donorForm').reset();
-                        window.switchView('search-donors');
-                    } catch(ex) {
-                        showCustomModal('خطأ في التسجيل', ex.message, 'fa-exclamation-triangle');
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerText = 'حفظ التسجيل كمتبرع';
-                    }
-                }
-            }, 1000);
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'donorsList'), newDonor);
+                showCustomModal('شكراً لانضمامك لنبض العراق!', 'تم حفظ وتحديث بياناتك كمتبرع متاح فوراً.', 'fa-heart');
+                document.getElementById('donorForm').reset();
+                window.switchView('search-donors');
+            } catch(ex) {
+                showCustomModal('خطأ في التسجيل', ex.message, 'fa-exclamation-triangle');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'حفظ التسجيل كمتبرع';
+            }
         }
 
         window.renderDonors = function(donors) {
