@@ -380,7 +380,7 @@
 
     </main>
 
-    <!-- Modal Box -->
+    <!-- Modal Box (General / Alert) -->
     <div id="customModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border border-red-50">
             <div id="modalIcon" class="w-14 h-14 bg-red-50 text-brand-500 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black shadow-inner">
@@ -392,13 +392,43 @@
         </div>
     </div>
 
+    <!-- POPUP MODAL FOR DONOR RESPONSE DETAILS -->
+    <div id="donorPopupModal" class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl border-2 border-brand-500">
+            <div class="flex items-center gap-3 border-b border-gray-100 pb-3">
+                <div class="w-12 h-12 bg-red-50 text-brand-500 rounded-2xl flex items-center justify-center text-xl font-black">
+                    <i class="fas fa-hand-holding-heart animate-bounce"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-brand-700 text-base">استجابة متبرع طارئة 🩸</h3>
+                    <p class="text-[10px] text-gray-400">تم العثور على متبرع مطابق للحالة وتم إشعارك فوراً</p>
+                </div>
+            </div>
+
+            <div id="popupContent" class="space-y-3 bg-red-50/40 p-4 rounded-2xl border border-red-100 text-xs">
+                <!-- Content injected dynamically -->
+            </div>
+
+            <div class="space-y-2 pt-2">
+                <a id="popupCallBtn" href="#" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition">
+                    <i class="fas fa-phone"></i> اتصال مباشر بالمتبرع الآن
+                </a>
+                <button id="popupResolveBtn" onclick="" class="w-full hero-gradient text-white py-3 rounded-xl font-black text-xs shadow-lg shadow-brand-500/20 hover:opacity-95 transition">
+                    <i class="fas fa-check-circle ml-1"></i> تم التبرع بنجاح (حذف الطلب نهائياً لمنع التراكم)
+                </button>
+                <button onclick="closeDonorPopup()" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-bold text-xs hover:bg-gray-200 transition">
+                    إغلاق النافذة مؤقتاً
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase & Logic Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Dismiss Splash Screen
         window.dismissSplash = function() {
             const splash = document.getElementById('splashScreen');
             if(splash) {
@@ -439,7 +469,6 @@
             updateGovernorateUI(chosen);
             document.getElementById('govSelectorModal').classList.add('hidden');
             
-            // Refresh views with new governorate filter
             renderHomeRequests();
             renderDonors(allDonors);
             renderAdminRequests();
@@ -472,12 +501,18 @@
             document.getElementById('customModal').classList.add('hidden');
         };
 
-        window.respondToRequest = function(patientName, patientPhone) {
+        window.closeDonorPopup = function() {
+            document.getElementById('donorPopupModal').classList.add('hidden');
+        };
+
+        // When a donor responds to a request -> Show pop up with donor details & option to delete request
+        window.respondToRequest = function(requestId, patientName, patientPhone) {
             const donorName = prompt("أدخل اسمك الكريم للتواصل كمتبرع:");
             if(!donorName) return;
             const donorPhone = prompt("أدخل رقم هاتفك للاتصال بك:");
             if(!donorPhone) return;
 
+            // Save to inbox notification
             const newMsg = {
                 id: Date.now().toString(),
                 title: 'استجابة متبرع جديدة 🩸',
@@ -489,7 +524,26 @@
             myInbox.unshift(newMsg);
             localStorage.setItem('iraq_inbox', JSON.stringify(myInbox));
             renderInbox();
-            showCustomModal('تم إرسال استجابتك!', `تم إرسال بياناتك كمتبرع كإشعار خاص لطالب الدم (${patientName}). شكراً لإنقاذك حياة!`, 'fa-heart');
+
+            // Display popup immediately on screen with donor details
+            const contentDiv = document.getElementById('popupContent');
+            contentDiv.innerHTML = `
+                <div class="space-y-1.5 font-bold text-gray-800">
+                    <div class="text-sm text-brand-700 font-black">المريض: ${patientName}</div>
+                    <div class="text-xs text-gray-600">اسم المتبرع المتطوع: <span class="text-gray-900 font-black">${donorName}</span></div>
+                    <div class="text-xs text-gray-600">رقم هاتف المتبرع: <span class="text-brand-700 font-black bg-white px-2 py-0.5 rounded border">${donorPhone}</span></div>
+                    <div class="text-[11px] text-emerald-700 font-semibold pt-1"><i class="fas fa-check-circle"></i> يمكنك التواصل هاتفياً معه فوراً وإتمام التبرع.</div>
+                </div>
+            `;
+
+            document.getElementById('popupCallBtn').href = `tel:${donorPhone}`;
+            document.getElementById('popupResolveBtn শক্তির').onclick = function() {
+                deleteRequest(requestId);
+                closeDonorPopup();
+                showCustomModal('تم إغلاق وحذف الطلب بنجاح', 'تمت عملية التبرع وإزالة الطلب من النظام لمنع أي تراكم.', 'fa-circle-check');
+            };
+
+            document.getElementById('donorPopupModal').classList.remove('hidden');
         };
 
         window.clearInbox = function() {
@@ -553,7 +607,6 @@
             const list = document.getElementById('adminList');
             if(!list) return;
 
-            // Strict filtering by active governorate
             const govReqs = allRequests.filter(r => (r.governorate || 'ميسان') === selectedGovernorate);
 
             if(govReqs.length === 0) {
@@ -567,7 +620,7 @@
                         <div class="font-bold text-gray-900">${r.name} (${r.blood})</div>
                         <div class="text-[10px] text-gray-500">${r.hospital} - ${r.phone}</div>
                     </div>
-                    <button onclick="deleteRequest('${r.id}')" class="text-red-500 bg-red-50 p-2 rounded-xl hover:bg-red-500 hover:text-white transition">
+                    <button onclick="deleteRequest('${r.id}')" class="text-red-500 bg-red-50 p-2 rounded-xl hover:bg-red-500 hover:text-white transition" title="حذف الطلب">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -675,13 +728,15 @@
             };
 
             setTimeout(async () => {
+                let docId = 'local_' + Date.now();
                 try {
                     if(db) {
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests'), newReq);
+                        const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bloodRequests'), newReq);
+                        docId = docRef.id;
                     }
                 } catch(err) {}
                 
-                allRequests.unshift({ id: 'local_' + Date.now(), ...newReq });
+                allRequests.unshift({ id: docId, ...newReq });
                 localStorage.setItem('iraq_reqs', JSON.stringify(allRequests));
                 
                 renderHomeRequests();
@@ -746,7 +801,6 @@
             const list = document.getElementById('homeRequestsList');
             if(!list) return;
 
-            // Strict filtering by selected governorate
             const filteredReqs = allRequests.filter(r => (r.governorate || 'ميسان') === selectedGovernorate);
 
             if(filteredReqs.length === 0) {
@@ -765,7 +819,7 @@
                         <div class="text-[11px] text-gray-600 mt-0.5 font-medium"><i class="fas fa-hospital text-brand-500"></i> ${r.hospital}</div>
                         <div class="text-[11px] text-gray-400 mt-1 font-normal">${r.notes}</div>
                     </div>
-                    <button onclick="respondToRequest('${r.name}', '${r.phone}')" class="w-full bg-red-50 text-brand-700 py-2.5 rounded-2xl font-black text-xs hover:bg-brand-500 hover:text-white transition">
+                    <button onclick="respondToRequest('${r.id}', '${r.name}', '${r.phone}')" class="w-full bg-red-50 text-brand-700 py-2.5 rounded-2xl font-black text-xs hover:bg-brand-500 hover:text-white transition">
                         <i class="fas fa-hand-holding-medical"></i> أنا متبرع لهذا المريض
                     </button>
                 </div>
@@ -776,7 +830,6 @@
             const list = document.getElementById('donorsList');
             if(!list) return;
 
-            // Strict filtering by active governorate ONLY
             const govDonors = donors.filter(d => (d.governorate || 'ميسان') === selectedGovernorate);
 
             if(govDonors.length === 0) {
