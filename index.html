@@ -39,10 +39,9 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
-    <!-- WELCOME SPLASH SCREEN (هوية visual identity - بنك الدم العراقي) -->
+    <!-- WELCOME SPLASH SCREEN -->
     <div id="splashScreen" class="fixed inset-0 z-[100] hero-gradient flex flex-col justify-between items-center p-8 text-white transition-opacity duration-700">
         <div class="my-auto text-center space-y-6">
-            <!-- Animated Iraqi Blood Bank Logo -->
             <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
                 <div class="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
                 <div class="w-28 h-28 bg-white rounded-3xl shadow-2xl flex items-center justify-center text-brand-600 text-5xl font-black transform rotate-3">
@@ -52,11 +51,11 @@
             
             <div class="space-y-2">
                 <div class="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black border border-white/30 tracking-wider">
-                    🇮🇷 المنصة الوطنية الكبرى
+                    🇮🇶 المنصة الوطنية الكبرى
                 </div>
                 <h1 class="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-md">بنك الدم العراقي</h1>
                 <p class="text-xs sm:text-sm text-white/90 font-medium max-w-xs mx-auto leading-relaxed">
-                    النظام السحابي الوطني الموحد لربط المتبرعين بحالات الطوارئ في عموم المحافظات
+                    النظام السحابي الوطني الموحد لربط المتبرعين بحالات الطوارئ حسب المحافظات
                 </p>
             </div>
 
@@ -67,17 +66,48 @@
             </div>
         </div>
 
-        <!-- Rights Footer -->
         <div class="text-center space-y-1 border-t border-white/20 pt-4 w-full max-w-xs">
             <div class="text-xs font-bold text-white/90">جميع الحقوق محفوظة © 2026</div>
             <div class="text-xs font-black text-yellow-300 flex items-center justify-center gap-1">
-                <i class="fas fa-code text-white"></i> تم التطوير والتصميم بواسطة: <span class="bg-black/30 px-2 py-0.5 rounded-md border border-white/20">قاسم</span>
+                <i class="fas fa-code text-white"></i> تمت البرمجة بواسطة: <span class="bg-black/30 px-2 py-0.5 rounded-md border border-white/20">قاسم عباس</span>
             </div>
         </div>
     </div>
 
-    <!-- SELECT GOVERNORATE MODAL OVERLAY (REQUIRED AT FIRST ENTRY) -->
+    <!-- SELECT GOVERNORATE MODAL OVERLAY -->
     <div id="govSelectorModal" class="fixed inset-0 z-50 bg-brand-900/80 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border border-red-50">
+            <div class="w-14 h-14 bg-red-50 text-brand-500 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black shadow-inner">
+                <i class="fas fa-map-location-dot"></i>
+            </div>
+            <div class="font-black text-base text-gray-900">اختر محافظتك للمتابعة</div>
+            <p class="text-xs text-gray-500 leading-relaxed">سيتم تصفية الطلبات والمتبرعين وعرض أهل محافظتك فقط لضمان سرعة الاستجابة.</p>
+            
+            <select id="modalGovSelect" class="w-full p-3.5 rounded-2xl border border-gray-200 bg-gray-50 font-bold text-brand-700 outline-none focus:border-brand-500">
+                <option value="ميسان">ميسان</option>
+                <option value="بغداد">بغداد</option>
+                <option value="البصرة">البصرة</option>
+                <option value="كركوك">كركوك</option>
+                <option value="أربيل">أربيل</option>
+                <option value="الموصل">الموصل (نينوى)</option>
+                <option value="ذي قار">ذي قار</option>
+                <option value="النجف الأشرف">النجف الأشرف</option>
+                <option value="كربلاء المقدسة">كربلاء المقدسة</option>
+                <option value="بابل">بابل</option>
+                <option value="الديوانية">الديوانية (القادسية)</option>
+                <option value="المثنى">المثنى</option>
+                <option value="واسط">واسط</option>
+                <option value="السليمانية">السليمانية</option>
+                <option value="دهوك">دهوك</option>
+                <option value="ديالى">ديالى</option>
+                <option value="الأنبار">الأنبار</option>
+                <option value="صلاح الدين">صلاح الدين</option>
+            </select>
+
+            <button onclick="confirmGovernorateSelection()" class="w-full hero-gradient text-white py-3.5 rounded-2xl font-black text-xs shadow-lg shadow-brand-500/20 hover:opacity-95 transition">
+                تأكيد ودخول المنصة <i class="fas fa-check mr-1"></i>
+            </button>
+        </div>
     </div>
 
     <!-- Header -->
@@ -95,7 +125,6 @@
                 </div>
             </div>
 
-            <!-- Header Action buttons -->
             <div class="flex items-center gap-2">
                 <button onclick="openGovSelector()" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-brand-700 transition flex items-center gap-1">
                     <i class="fas fa-sliders text-brand-500"></i> <span class="hidden sm:inline">تغيير</span> المحافظة
@@ -150,7 +179,7 @@
                     <i class="fas fa-map-pin"></i> نطاق العرض: محافظة <span id="heroGovTitle" class="underline font-black">ميسان</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-black leading-tight">قطرة منك.. قد تنقذ حياة مريض قريب منك</h1>
-                <p class="text-xs sm:text-sm text-white/90 leading-relaxed max-w-xl font-medium">الطلبات الواردة من مستشفيات <span id="heroGovName">ميسان</span> تظهر هنا مباشرة فور إرسالها لتمكين المتبرعين من الاستجابة السريعة.</p>
+                <p class="text-xs sm:text-sm text-white/90 leading-relaxed max-w-xl font-medium">الطلبات الواردة من مستشفيات محافظة <span id="heroGovName">ميسان</span> تظهر هنا حصرياً لتمكين متبرعي المحافظة من الاستجابة السريعة.</p>
                 <div class="flex flex-wrap gap-2.5 pt-2">
                     <button onclick="switchView('request-blood')" class="bg-white text-brand-700 px-5 py-3 rounded-2xl font-black text-xs shadow-lg hover:bg-red-50 transition active:scale-95">
                         <i class="fas fa-plus-circle ml-1"></i> طلب دم طارئ
@@ -198,7 +227,7 @@
                 <div class="border-b border-gray-100 pb-3 flex justify-between items-center">
                     <div>
                         <h2 class="font-black text-brand-700 text-base">تقديم طلب دم طارئ</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">سيتم نشر الطلب فوراً للمتبرعين في <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
+                        <p class="text-[11px] text-gray-400 font-medium">سيتم نشر الطلب فوراً لمتبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
                     </div>
                     <span class="w-9 h-9 rounded-2xl bg-red-50 text-brand-500 flex items-center justify-center font-black"><i class="fas fa-notes-medical"></i></span>
                 </div>
@@ -248,7 +277,7 @@
                 <div class="border-b border-gray-100 pb-3 flex justify-between items-center">
                     <div>
                         <h2 class="font-black text-brand-700 text-base">تسجيل متبرع جديد</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">سيتم تسجيلك في متبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
+                        <p class="text-[11px] text-gray-400 font-medium">سيتم تسجيلك ضمن متبرعي محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
                     </div>
                     <span class="w-9 h-9 rounded-2xl bg-red-50 text-brand-500 flex items-center justify-center font-black"><i class="fas fa-user-plus"></i></span>
                 </div>
@@ -294,7 +323,7 @@
                 <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                     <div>
                         <h2 class="font-black text-brand-700 text-base">دليل المتبرعين المتاحين</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">عرض المتبرعين المسجلين في محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
+                        <p class="text-[11px] text-gray-400 font-medium">عرض المتبرعين المسجلين في محافظة <span class="currentGovText font-bold text-gray-700">ميسان</span> حصرياً</p>
                     </div>
                     <span class="w-9 h-9 rounded-2xl bg-red-50 text-brand-500 flex items-center justify-center font-black"><i class="fas fa-search"></i></span>
                 </div>
@@ -323,7 +352,7 @@
                 <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                     <div>
                         <h2 class="font-black text-brand-700 text-base">لوحة إدارة الطوارئ بالمحافظة</h2>
-                        <p class="text-[11px] text-gray-400 font-medium">إدارة ومراجعة الطلبات لمحافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
+                        <p class="text-[11px] text-gray-400 font-medium">إدارة ومراجعة الطلبات الخاصة بمحافظة <span class="currentGovText font-bold text-gray-700">ميسان</span></p>
                     </div>
                     <span class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-black">Super Admin</span>
                 </div>
@@ -381,7 +410,6 @@
             }
         };
 
-        // Auto dismiss splash screen after 2.5 seconds
         setTimeout(() => {
             window.dismissSplash();
         }, 2500);
@@ -400,21 +428,26 @@
         let selectedGovernorate = localStorage.getItem('user_gov') || 'ميسان';
         let allRequests = [];
         let allDonors = [];
-        let myInbox = JSON.parse(localStorage.getItem('maysan_inbox') || JSON.stringify([
-            { id: '1', title: 'أهلاً بك', text: 'مرحباً بك في منصة نبض العراق. سيتم عرض الطلبات والمتبرعين الخاصين بمحافظتك فقط.', time: 'الآن', read: false }
+        let myInbox = JSON.parse(localStorage.getItem('iraq_inbox') || JSON.stringify([
+            { id: '1', title: 'أهلاً بك في نبض العراق', text: `تم اختيار محافظة ${selectedGovernorate} بنجاح. ستظهر لك طلبات ومتبرعي هذه المحافظة حصراً.`, time: 'الآن', read: false }
         ]));
 
-        // Global functions definition to avoid ReferenceErrors in onClick attributes
         window.confirmGovernorateSelection = function() {
             const chosen = document.getElementById('modalGovSelect').value;
             selectedGovernorate = chosen;
             localStorage.setItem('user_gov', chosen);
             updateGovernorateUI(chosen);
             document.getElementById('govSelectorModal').classList.add('hidden');
-            loadData();
+            
+            // Refresh views with new governorate filter
+            renderHomeRequests();
+            renderDonors(allDonors);
+            renderAdminRequests();
+            updateStats();
         };
 
         window.openGovSelector = function() {
+            document.getElementById('modalGovSelect').value = selectedGovernorate;
             document.getElementById('govSelectorModal').classList.remove('hidden');
         };
 
@@ -424,6 +457,8 @@
             if(target) target.classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             if(view === 'inbox') markInboxRead();
+            if(view === 'search-donors') renderDonors(allDonors);
+            if(view === 'admin-dashboard') renderAdminRequests();
         };
 
         window.showCustomModal = function(title, message, icon = 'fa-bell') {
@@ -452,14 +487,14 @@
             };
 
             myInbox.unshift(newMsg);
-            localStorage.setItem('maysan_inbox', JSON.stringify(myInbox));
+            localStorage.setItem('iraq_inbox', JSON.stringify(myInbox));
             renderInbox();
             showCustomModal('تم إرسال استجابتك!', `تم إرسال بياناتك كمتبرع كإشعار خاص لطالب الدم (${patientName}). شكراً لإنقاذك حياة!`, 'fa-heart');
         };
 
         window.clearInbox = function() {
             myInbox = [];
-            localStorage.setItem('maysan_inbox', JSON.stringify([]));
+            localStorage.setItem('iraq_inbox', JSON.stringify([]));
             renderInbox();
         };
 
@@ -470,7 +505,7 @@
                 }
             } catch(e) {}
             allRequests = allRequests.filter(r => r.id !== id);
-            localStorage.setItem('maysan_reqs', JSON.stringify(allRequests));
+            localStorage.setItem('iraq_reqs', JSON.stringify(allRequests));
             renderHomeRequests();
             renderAdminRequests();
             updateStats();
@@ -510,7 +545,7 @@
 
         function markInboxRead() {
             myInbox.forEach(m => m.read = true);
-            localStorage.setItem('maysan_inbox', JSON.stringify(myInbox));
+            localStorage.setItem('iraq_inbox', JSON.stringify(myInbox));
             renderInbox();
         }
 
@@ -518,6 +553,7 @@
             const list = document.getElementById('adminList');
             if(!list) return;
 
+            // Strict filtering by active governorate
             const govReqs = allRequests.filter(r => (r.governorate || 'ميسان') === selectedGovernorate);
 
             if(govReqs.length === 0) {
@@ -547,9 +583,11 @@
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'nabad-iraq-maysan-prod';
 
-        // Check if governorate is set, else open selection modal
         window.addEventListener('DOMContentLoaded', () => {
             updateGovernorateUI(selectedGovernorate);
+            if(!localStorage.getItem('user_gov')) {
+                document.getElementById('govSelectorModal').classList.remove('hidden');
+            }
         });
 
         function updateGovernorateUI(gov) {
@@ -589,8 +627,8 @@
         }
 
         function loadLocalFallback() {
-            allRequests = JSON.parse(localStorage.getItem('maysan_reqs') || '[]');
-            allDonors = JSON.parse(localStorage.getItem('maysan_donors') || '[]');
+            allRequests = JSON.parse(localStorage.getItem('iraq_reqs') || '[]');
+            allDonors = JSON.parse(localStorage.getItem('iraq_donors') || '[]');
             renderHomeRequests();
             renderAdminRequests();
             renderDonors(allDonors);
@@ -616,11 +654,11 @@
             btn.disabled = true;
 
             let countdown = 3;
-            btn.innerText = `جاري الإرسال بالمحافظة... (${countdown})`;
+            btn.innerText = `جاري إرسال الطلب لـ ${selectedGovernorate}... (${countdown})`;
             const timer = setInterval(() => {
                 countdown--;
                 if(countdown > 0) {
-                    btn.innerText = `جاري الإرسال بالمحافظة... (${countdown})`;
+                    btn.innerText = `جاري إرسال الطلب لـ ${selectedGovernorate}... (${countdown})`;
                 } else {
                     clearInterval(timer);
                 }
@@ -644,7 +682,7 @@
                 } catch(err) {}
                 
                 allRequests.unshift({ id: 'local_' + Date.now(), ...newReq });
-                localStorage.setItem('maysan_reqs', JSON.stringify(allRequests));
+                localStorage.setItem('iraq_reqs', JSON.stringify(allRequests));
                 
                 renderHomeRequests();
                 renderAdminRequests();
@@ -653,7 +691,7 @@
                 btn.disabled = false;
                 btn.innerText = 'نشر الطلب فوراً بالمحافظة';
                 document.getElementById('reqForm').reset();
-                showCustomModal('تم النشر بنجاح!', `تم نشر طلبك فوراً للمتبرعين المتواجدين في محافظة ${selectedGovernorate}.`, 'fa-check-circle');
+                showCustomModal('تم النشر بنجاح!', `تم نشر طلبك فوراً لمتبرعي محافظة ${selectedGovernorate} حصراً.`, 'fa-check-circle');
                 switchView('home');
             }, 3000);
         }
@@ -664,11 +702,11 @@
             btn.disabled = true;
 
             let countdown = 3;
-            btn.innerText = `جاري حفظ التسجيل... (${countdown})`;
+            btn.innerText = `جاري تسجيلك في ${selectedGovernorate}... (${countdown})`;
             const timer = setInterval(() => {
                 countdown--;
                 if(countdown > 0) {
-                    btn.innerText = `جاري حفظ التسجيل... (${countdown})`;
+                    btn.innerText = `جاري تسجيلك في ${selectedGovernorate}... (${countdown})`;
                 } else {
                     clearInterval(timer);
                 }
@@ -691,7 +729,7 @@
                 } catch(err) {}
 
                 allDonors.unshift({ id: 'local_d_' + Date.now(), ...newDonor });
-                localStorage.setItem('maysan_donors', JSON.stringify(allDonors));
+                localStorage.setItem('iraq_donors', JSON.stringify(allDonors));
 
                 renderDonors(allDonors);
                 updateStats();
@@ -708,7 +746,7 @@
             const list = document.getElementById('homeRequestsList');
             if(!list) return;
 
-            // Strict filtering by governorate
+            // Strict filtering by selected governorate
             const filteredReqs = allRequests.filter(r => (r.governorate || 'ميسان') === selectedGovernorate);
 
             if(filteredReqs.length === 0) {
@@ -738,7 +776,7 @@
             const list = document.getElementById('donorsList');
             if(!list) return;
 
-            // Strict filter donors based on selected governorate only
+            // Strict filtering by active governorate ONLY
             const govDonors = donors.filter(d => (d.governorate || 'ميسان') === selectedGovernorate);
 
             if(govDonors.length === 0) {
@@ -762,7 +800,6 @@
 
         window.filterDonors = function() {
             const blood = document.getElementById('searchBlood').value;
-            // First filter by active governorate, then by blood type
             let filtered = allDonors.filter(d => (d.governorate || 'ميسان') === selectedGovernorate);
             if(blood) {
                 filtered = filtered.filter(d => d.blood === blood);
